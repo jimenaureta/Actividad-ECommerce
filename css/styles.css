@@ -397,3 +397,55 @@ body.login-page #spinner-wrapper .lds-ring{
   cursor: pointer;
 }
 .salir-btn:hover { filter: brightness(.95); }
+
+/* =========================
+   Responsive específico
+   ========================= */
+
+/* Móviles pequeños (320 x 568 aprox) */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  .jumbotron {
+    padding: 2rem 1rem;
+    background-size: cover;
+    background-position: center;
+  }
+  .jumbotron .lead {
+    font-size: 20px;  /* más chico para que no se corte */
+  }
+  .card img, .custom-card img {
+    height: 150px;
+    object-fit: cover;
+  }
+  .container, .album {
+    padding: 0 10px;
+  }
+  .navbar-nav {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Tablets (768 x 1024) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
+  .jumbotron {
+    padding: 3rem 2rem;
+    background-size: cover;
+    background-position: center;
+  }
+  .jumbotron .lead {
+    font-size: 28px;
+  }
+  .card img, .custom-card img {
+    height: 200px;
+    object-fit: cover;
+  }
+  .container, .album {
+    padding: 0 20px;
+  }
+}
