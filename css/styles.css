@@ -449,3 +449,129 @@ body.login-page #spinner-wrapper .lds-ring{
     padding: 0 20px;
   }
 }
+
+/* ====== Grid y cartas para productos ====== */
+#productos-container.lista{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+#productos-container .fila{
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Imagen controlada (no a tamaño original) */
+#productos-container .thumb{
+  margin: 0;
+}
+#productos-container .thumb img{
+  width: 100%;
+  height: 200px;         /* cambiá 200 por 220/240 si querés */
+  object-fit: cover;     /* recorta manteniendo proporción */
+  display: block;
+}
+
+/* Texto y tipografía */
+#productos-container .nombre{
+  font-size: 1.1rem;
+  margin: 12px 12px 0;
+}
+#productos-container .box{
+  padding: 8px 12px 12px;
+}
+#productos-container .precio{
+  font-weight: 700;
+}
+#productos-container .vendidos{
+  color: #666;
+  font-size: .9rem;
+}
+
+/* Responsive finito para móvil (1 por fila ya lo maneja el grid) */
+@media (min-width: 992px){
+  #productos-container .thumb img{ height: 220px; }
+}
+/* ===== Controles de products (orden + filtro) ===== */
+#controles{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  background:#fff;
+  border:1px solid #e9ecef;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+/* grupo de botones (⇧$, ⇩$, #Rel) compacto */
+#controles .btn-group .btn{
+  padding:6px 10px;
+  line-height:1;
+  font-weight:600;
+  border-color:#dfe3e6;
+}
+#controles .btn-group .btn:focus,
+#controles .btn-group .btn:active{
+  outline:0;
+  box-shadow:0 0 0 3px rgba(13,110,253,.15);
+}
+
+/* etiqueta “Precio” y campos min/máx chicos en desktop */
+#controles .form-control{
+  max-width:130px;      /* ancho de los inputs en desktop */
+}
+#controles .form-control::placeholder{
+  color:#96a0aa;
+}
+#controles .ms-3{
+  margin-left:16px !important; /* separa la etiqueta “Precio” del grupo de botones */
+  color:#6c757d;
+  font-weight:600;
+}
+
+/* botón Filtrar y enlace Limpiar */
+#controles #btnFilter{
+  padding:6px 14px;
+}
+#controles #btnClear{
+  padding:0;
+}
+
+/* ===== Responsivo: móvil/tablet (apilado como 2ª imagen) ===== */
+@media (max-width: 768px){
+  #controles{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+  #controles .ms-3{
+    margin-left:0 !important;
+  }
+  #controles .form-control{
+    max-width:none;     /* inputs a 100% */
+    width:100%;
+  }
+  /* Botones: que no ocupen todo el ancho pero queden prolijos */
+  #controles .btn-group{
+    width:100%;
+  }
+  #controles .btn-group .btn{
+    flex:1 1 auto;
+    text-align:center;
+  }
+  /* Filtrar y Limpiar en línea pero con buen toque */
+  #controles #btnFilter{
+    width:auto;
+    align-self:flex-start;
+  }
+  #controles #btnClear{
+    align-self:flex-start;
+    margin-left:8px;
+  }
+}

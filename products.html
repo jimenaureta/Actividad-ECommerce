@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,8 +7,10 @@
 
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
   <link href="css/font-awesome.min.css" rel="stylesheet">
+  <script type="module" src="js/products.js"></script>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/styles.css" rel="stylesheet">
+  
 </head>
 
 <body>
@@ -22,17 +23,12 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="categories.html">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell.html">Vender</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
         </ul>
-        <!-- Usuario (correo) + botón Salir a la derecha -->
+
+        <!-- Usuario (correo) + botón Salir -->
         <div class="d-flex align-items-center gap-2">
           <span id="usuarioActual" class="user-badge"></span>
           <button id="btnSalir" class="salir-btn">Salir</button>
@@ -41,67 +37,29 @@
     </div>
   </nav>
 
-  <main class="pb-5 container">
+  <main class="pb-5">
     <div class="container">
-      <h2 id="titulo" class="mt-4 mb-3 text-dark bg-light p-2 rounded">Autos</h2>
-      <div id="product-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <h2 id="titulo" class="mt-4 mb-3 text-dark bg-light p-2 rounded">Productos</h2>
 
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="img/prod50921_1.jpg" class="card-img-top" alt="Chevrolet Onix Joy">
-            <div class="card-body">
-              <h5 class="card-title">Chevrolet Onix Joy</h5>
-              <p class="card-text">Generación 2019, variedad de colores. Motor 1.0, ideal para ciudad.</p>
-              <p class="fw-bold text-success">USD 13,500</p>
-            </div>
-          </div>
+      <!-- CONTROLES: orden y filtro por precio -->
+      <div id="controles" class="d-flex align-items-center gap-2 flex-wrap my-3">
+        <div class="btn-group" role="group" aria-label="Ordenar">
+          <button id="btnAsc"  class="btn btn-outline-secondary" title="Precio ascendente">⇧ $</button>
+          <button id="btnDesc" class="btn btn-outline-secondary" title="Precio descendente">⇩ $</button>
+          <button id="btnRel"  class="btn btn-outline-secondary" title="Mayor relevancia"># Rel</button>
         </div>
 
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="img/prod50922_1.jpg" class="card-img-top" alt="Fiat Way">
-            <div class="card-body">
-              <h5 class="card-title">Fiat Way</h5>
-              <p class="card-text">La versión de Fiat que brinda confort y a un precio accesible.</p>
-              <p class="fw-bold text-success">USD 14,500</p>
-            </div>
-          </div>
-        </div>
+        <input type="search" id="searchBox" class="form-control form-control-sm" placeholder="Buscar producto...">
 
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="img/prod50923_1.jpg" class="card-img-top" alt="Suzuki Celerio">
-            <div class="card-body">
-              <h5 class="card-title">Suzuki Celerio</h5>
-              <p class="card-text">Un auto que se ha ganado la buena fama por su economía con el combustible.</p>
-              <p class="fw-bold text-success">USD 12,500</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="img/prod50924_1.jpg" class="card-img-top" alt="Peugeot 208">
-            <div class="card-body">
-              <h5 class="card-title">Peugeot 208</h5>
-              <p class="card-text">El modelo de auto que se sigue renovando y manteniendo su prestigio en comodidad.</p>
-              <p class="fw-bold text-success">USD 15,200</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="img/prod50925_1.jpg" class="card-img-top" alt="Bugatti Chiron">
-            <div class="card-body">
-              <h5 class="card-title">Bugatti Chiron</h5>
-              <p class="card-text">El mejor hiperdeportivo de mundo. Producción limitada a 500 unidades.</p>
-              <p class="fw-bold text-success">USD 3,500,000</p>
-            </div>
-          </div>
-        </div>
-
+        <span class="ms-3">Precio</span>
+        <input type="number" id="minPrice" class="form-control form-control-sm" placeholder="mín">
+        <input type="number" id="maxPrice" class="form-control form-control-sm" placeholder="máx">
+        <button id="btnFilter" class="btn btn-primary btn-sm">Filtrar</button>
+        <button id="btnClear"  class="btn btn-link btn-sm">Limpiar</button>
       </div>
+
+      <!-- LISTA DINÁMICA (la completa products.js) -->
+      <section id="productos-container" class="lista" aria-label="Productos"></section>
     </div>
   </main>
 
@@ -118,23 +76,18 @@
 
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/init.js"></script>
-  <script src="js/products.js"></script>
+  <!-- IMPORTANTE: ahora es módulo para poder usar imports en products.js -->
+  <script type="module" src="js/products.js"></script>
 
-<script type="module">
-  import { cerrarSesion } from "./js/common.js";
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const badge = document.getElementById("usuarioActual");
-    if (badge) badge.textContent = sessionStorage.getItem("usuario") || "";
-
-    const btnSalir = document.getElementById("btnSalir");
-    if (btnSalir) {
-      btnSalir.addEventListener("click", function () {
-        cerrarSesion();
-      });
-    }
-  });
-</script>
-
+  <!-- Módulo pequeño para badge + salir -->
+  <script type="module">
+    import { cerrarSesion } from "./js/common.js";
+    document.addEventListener("DOMContentLoaded", () => {
+      const badge = document.getElementById("usuarioActual");
+      if (badge) badge.textContent = sessionStorage.getItem("usuario") || "";
+      const btnSalir = document.getElementById("btnSalir");
+      btnSalir?.addEventListener("click", cerrarSesion);
+    });
+  </script>
 </body>
 </html>
