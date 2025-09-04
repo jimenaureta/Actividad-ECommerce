@@ -1,200 +1,266 @@
+// js/products.js
 import {
   getJSONData,
-  PRODUCTS_101_URL,
-  fullAsset,
   requerirSesion,
   cerrarSesion,
   getUsuario,
 } from "./common.js";
 
-// ================== BACKUP DE IMÁGENES ==================
-const backupImages = {
+/* =================== Config / URLs =================== */
+const CAT_ID = localStorage.getItem("catID") || "101";
+const PRODUCTS_URL = `https://japceibal.github.io/emercado-api/cats_products/${CAT_ID}.json`;
+
+/* =================== Backups de imágenes =================== */
+// Backups confiables (Wikimedia/Unsplash) por NOMBRE EXACTO como viene en el JSON
+const backupImagesByName = {
+  // --- JUGUETES (cat 102) ---
+  "Oso de peluche":
+    "https://office2000.com.uy/image/cache/catalog/office%202000/productos/1/94857-1200x1200.jpg",
+  "Pelota de básquetbol":
+    "https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png",
+  "Bicicleta":
+    "https://f.fcdn.app/imgs/c30f2e/nicolini.uy/nicouy/e808/original/catalogo/984429_984429_1/1920-1200/bicicleta-s-pro-bmx-20-vert-de-freestyle-cuadro-rigido-transmision-fija-y-ruedas-de-48-rayos-bicicleta-s-pro-bmx-20-vert-de-freestyle-cuadro-rigido-transmision-fija-y-ruedas-de-48-rayos.jpg",
+  "PlayStation 5":
+    "https://pro-gamer.uy/wp-content/uploads/2023/04/PS5-Slim-Bluray-web.png",
+
+  // --- AUTOS (cat 101) ---
   "Chevrolet Onix Joy":
     "https://www.chevrolet.com.uy/content/dam/chevrolet/south-america/uruguay/espanol/index/cars/2021-onix/colorizer/01-images/new-colorizer/ago-2022/colorizer-blanco.jpg?imwidth=1200",
   "Fiat Way":
     "https://http2.mlstatic.com/D_NQ_NP_687550-MLU50708884548_072022-O.webp",
-  "Suzuki Celerio": "https://www.suzuki.com.uy/public/color5.png",
+  "Suzuki Celerio":
+    "https://www.suzuki.com.uy/public/color5.png",
   "Peugeot 208":
     "https://www.pngplay.com/wp-content/uploads/13/Peugeot-208-2019-Download-Free-PNG.png",
   "Bugatti Chiron":
     "https://purepng.com/public/uploads/large/purepng.com-black-bugatti-chiron-carcarvehicletransportbugatti-961524653349rn5ct.png",
 };
 
-// ================== HELPERS & ESTADO UI ==================
+// Fallback genérico por categoría (si no hay por nombre)
+const categoryFallback = (() => {
+  if (CAT_ID === "102") {
+    return "https://images.unsplash.com/photo-1589739906089-6ce109f31f0b?auto=format&fit=crop&w=900&q=70"; // juguetes
+  }
+  if (CAT_ID === "101") {
+    return "https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=900&q=70"; // autos
+  }
+  return "https://images.unsplash.com/photo-1515165562835-c3b8c8e31f10?auto=format&fit=crop&w=900&q=70"; // genérico
+})();
+
+/* =================== Helpers =================== */
 const $ = (s) => document.querySelector(s);
 
-let products = []; // lista original
-let view = [];     // lista filtrada/ordenada que se muestra
-
-// Persistencia de filtros/orden
-const LS = { MIN: "f_min", MAX: "f_max", SORT: "f_sort" };
-const getMin = () => parseInt($("#minPrice")?.value ?? "", 10);
-const getMax = () => parseInt($("#maxPrice")?.value ?? "", 10);
-
-function saveFilters() {
-  const min = getMin();
-  const max = getMax();
-  Number.isFinite(min) ? localStorage.setItem(LS.MIN, String(min)) : localStorage.removeItem(LS.MIN);
-  Number.isFinite(max) ? localStorage.setItem(LS.MAX, String(max)) : localStorage.removeItem(LS.MAX);
+function joinRepo(path) {
+  // Une con la raíz del repo público si el path es relativo
+  const p = String(path || "").replace(/^\/+/, "");
+  return /^https?:\/\//i.test(p)
+    ? p
+    : `https://japceibal.github.io/emercado-api/${p}`;
 }
-function restoreFilters() {
-  const min = localStorage.getItem(LS.MIN);
-  const max = localStorage.getItem(LS.MAX);
-  if (min !== null && $("#minPrice")) $("#minPrice").value = min;
-  if (max !== null && $("#maxPrice")) $("#maxPrice").value = max;
+function joinFromJson(path) {
+  // Une relativo al JSON (p.ej. .../cats_products/img/archivo.jpg)
+  return /^https?:\/\//i.test(path)
+    ? path
+    : new URL(String(path || ""), PRODUCTS_URL).href;
 }
-function saveSort(kind) { localStorage.setItem(LS.SORT, kind); }
-function restoreSort() { return localStorage.getItem(LS.SORT); }
 
-// ================== RENDER ==================
+// Escoge la mejor URL inicial para la imagen
+function pickImageURL(product) {
+  // Si tengo backup por NOMBRE (en Juguetes p.ej.), lo uso directo
+  if (backupImagesByName[product.name]) return backupImagesByName[product.name];
+
+  // Si no, pruebo relativo al JSON; si el JSON dice "img/...", esto suele ser suficiente
+  if (product.image) return joinFromJson(product.image);
+
+  // Último recurso inicial
+  return categoryFallback;
+}
+
+/* =================== Estado (única fuente de verdad) =================== */
+let all = []; // lista original
+const state = {
+  min: null,
+  max: null,
+  q: "",                 // búsqueda
+  sort: localStorage.getItem("f_sort") || "rel", // 'asc' | 'desc' | 'rel'
+};
+
+/* =================== Render =================== */
 function render(list) {
   const cont = $("#productos-container");
-  if (!cont) return;
+  cont.innerHTML = list
+    .map((p) => {
+      const initial = pickImageURL(p);
+      // guardo data-* para el fallback escalonado
+      const dataPath = (p.image || "").replace(/"/g, "&quot;");
+      const dataName = p.name.replace(/"/g, "&quot;");
 
-  cont.innerHTML = list.map((p) => `
-    <article class="fila" data-id="${p.id}">
-      <figure class="thumb">
-        <img
-          src="${p.image}"
-          alt="${p.name}"
-          loading="lazy"
-          referrerpolicy="no-referrer"
-          data-name="${p.name.replace(/"/g, "&quot;")}"
-        >
-      </figure>
-      <div class="info">
-        <h2 class="nombre">${p.name}</h2>
-        <div class="box">
-          <span class="vendidos">${p.soldCount} unidades</span>
-          <p class="desc">${p.description}</p>
-          <span class="precio">USD ${p.cost}</span>
+      return `
+      <article class="fila" data-id="${p.id}">
+        <figure class="thumb">
+          <img
+            src="${initial}"
+            alt="${dataName}"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            data-name="${dataName}"
+            data-path="${dataPath}"
+          >
+        </figure>
+        <div class="info">
+          <h2 class="nombre">${p.name} - UYU ${p.cost}</h2>
+          <div class="box">
+            <p class="desc">${p.description}</p>
+            <small class="vendidos">${p.soldCount} vendidos</small>
+          </div>
         </div>
-      </div>
-    </article>
-  `).join("");
+      </article>`;
+    })
+    .join("");
 
-  // Fallback de imágenes (usa backupImages y luego placeholder)
+  // Fallbacks en cascada si igualmente falla
   cont.querySelectorAll("img[data-name]").forEach((img) => {
-    let triedBackup = false;
+    let triedRepoBackup = false;
+    let triedNameBackup = false;
+    let triedCategory = false;
+
     img.addEventListener("error", () => {
-      const name = img.getAttribute("data-name");
-      if (!triedBackup && backupImages[name]) {
-        triedBackup = true;
-        img.src = backupImages[name];
+      const name = img.getAttribute("data-name") || "Producto";
+      const path = img.getAttribute("data-path") || "";
+
+      // 1) raíz del repo (por si el JSON tenía path relativo)
+      if (!triedRepoBackup && path) {
+        triedRepoBackup = true;
+        img.src = joinRepo(path);
         return;
       }
-      img.src = `https://placehold.co/800x480?text=${encodeURIComponent(name || "Producto")}`;
+      // 2) backup por nombre
+      if (!triedNameBackup && backupImagesByName[name]) {
+        triedNameBackup = true;
+        img.src = backupImagesByName[name];
+        return;
+      }
+      // 3) fallback de categoría
+      if (!triedCategory && categoryFallback) {
+        triedCategory = true;
+        img.src = categoryFallback;
+        return;
+      }
+      // 4) placeholder
+      img.src = `https://placehold.co/800x480?text=${encodeURIComponent(name)}`;
     });
   });
 }
 
-// ================== FILTRO & ORDEN ==================
-function applyFilters() {
-  const min = getMin();
-  const max = getMax();
-  const lo = Number.isFinite(min) ? min : -Infinity;
-  const hi = Number.isFinite(max) ? max : Infinity;
-  view = products.filter((p) => p.cost >= lo && p.cost <= hi);
-  render(view);
-  saveFilters();
-}
+/* =================== Lógica de filtros + orden + búsqueda =================== */
+function recompute() {
+  let list = all.slice();
 
-function sortBy(kind) {
-  const list = (view.length ? view : products).slice();
-  if (kind === "asc")  list.sort((a, b) => a.cost - b.cost);
-  if (kind === "desc") list.sort((a, b) => b.cost - a.cost);
-  if (kind === "rel")  list.sort((a, b) => b.soldCount - a.soldCount);
-  render(list);
-  saveSort(kind);
-}
+  // precio
+  const lo = Number.isFinite(state.min) ? state.min : -Infinity;
+  const hi = Number.isFinite(state.max) ? state.max : Infinity;
+  list = list.filter((p) => p.cost >= lo && p.cost <= hi);
 
-// ================== BUSCADOR (en tiempo real) ==================
-function applySearch() {
-  const q = ($("#searchBox")?.value || "").toLowerCase();
-  const base = view.length ? view : products; // busca sobre lo filtrado/ordenado
-  if (!q) {
-    // si no hay texto, re-renderizar base actual
-    render(base);
-    return;
+  // búsqueda en nombre + descripción
+  if (state.q) {
+    const q = state.q.toLowerCase();
+    list = list.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+    );
   }
-  const filtered = base.filter(p =>
-    p.name.toLowerCase().includes(q) ||
-    p.description.toLowerCase().includes(q)
-  );
-  render(filtered);
+
+  // orden
+  if (state.sort === "asc")   list.sort((a, b) => a.cost - b.cost);
+  if (state.sort === "desc")  list.sort((a, b) => b.cost - a.cost);
+  if (state.sort === "rel")   list.sort((a, b) => b.soldCount - a.soldCount);
+
+  render(list);
 }
 
-// ================== CLICK -> PRODUCT INFO ==================
-function handleOpenInfo(e) {
-  const art = e.target.closest(".fila");
-  if (!art) return;
-  const id = art.dataset.id;
-  if (!id) return;
-  localStorage.setItem("prodID", id);
-  location.href = "product-info.html";
+/* =================== Eventos UI =================== */
+function wireUI() {
+  // Orden
+  $("#btnAsc")?.addEventListener("click", () => { state.sort = "asc";  localStorage.setItem("f_sort", "asc");  recompute(); });
+  $("#btnDesc")?.addEventListener("click", () => { state.sort = "desc"; localStorage.setItem("f_sort", "desc"); recompute(); });
+  $("#btnRel")?.addEventListener("click", () => { state.sort = "rel";  localStorage.setItem("f_sort", "rel");  recompute(); });
+
+  // Filtro por precio
+  $("#btnFilter")?.addEventListener("click", () => {
+    const min = parseInt($("#minPrice")?.value ?? "", 10);
+    const max = parseInt($("#maxPrice")?.value ?? "", 10);
+    state.min = Number.isFinite(min) ? min : null;
+    state.max = Number.isFinite(max) ? max : null;
+    localStorage.setItem("f_min", state.min ?? "");
+    localStorage.setItem("f_max", state.max ?? "");
+    recompute();
+  });
+
+  $("#btnClear")?.addEventListener("click", () => {
+    state.min = null;
+    state.max = null;
+    if ($("#minPrice")) $("#minPrice").value = "";
+    if ($("#maxPrice")) $("#maxPrice").value = "";
+    localStorage.removeItem("f_min");
+    localStorage.removeItem("f_max");
+    recompute();
+  });
+
+  // Búsqueda en tiempo real
+  $("#searchBox")?.addEventListener("input", (e) => {
+    state.q = (e.target.value || "").trim().toLowerCase();
+    recompute();
+  });
+
+  // Click -> detalle
+  $("#productos-container")?.addEventListener("click", (e) => {
+    const art = e.target.closest(".fila");
+    if (!art) return;
+    localStorage.setItem("prodID", art.dataset.id);
+    location.href = "product-info.html";
+  });
 }
 
-// ================== INIT ==================
+/* =================== Init =================== */
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1) Guardia de sesión + barra superior
+  // Guardia de sesión + header
   requerirSesion();
-  $("#usuarioActual") && ($("#usuarioActual").textContent = getUsuario());
+  const badge = $("#usuarioActual");
+  if (badge) badge.textContent = getUsuario() || "";
   $("#btnSalir")?.addEventListener("click", cerrarSesion);
 
-  // 2) Contenedor
-  const cont = $("#productos-container");
-  if (!cont) return;
+  // Restaurar UI de filtros y orden
+  const minLS = localStorage.getItem("f_min");
+  const maxLS = localStorage.getItem("f_max");
+  if (minLS && $("#minPrice")) $("#minPrice").value = minLS;
+  if (maxLS && $("#maxPrice")) $("#maxPrice").value = maxLS;
+  state.min = minLS ? parseInt(minLS, 10) : null;
+  state.max = maxLS ? parseInt(maxLS, 10) : null;
+
+  wireUI();
 
   try {
-    // 3) Fetch de la categoría 101
-    const data = await getJSONData(PRODUCTS_101_URL);
-    const list = Array.isArray(data) ? data : (data.products || []);
+    // Soporta ambos formatos de getJSONData (data directa o {status,data})
+    const res = await getJSONData(PRODUCTS_URL);
+    const data = (res && typeof res === "object" && "data" in res) ? res.data : res;
+    if (!data) throw new Error("Respuesta vacía");
 
-    products = list.map((p) => ({
+    const list = Array.isArray(data) ? data : (data.products || []);
+    all = list.map((p) => ({
       id: p.id,
       name: p.name,
       description: p.description,
       cost: p.cost,
       soldCount: p.soldCount,
-      image: fullAsset(p.image), // asegura URL absoluta
+      image: p.image, // lo resolvemos en render/pickImageURL
     }));
-    view = products.slice();
 
-    // 3.1 Título con nombre de categoría
-    if (data.catName) {
-      const t = $("#titulo");
-      if (t) t.textContent = data.catName;
-    }
+    if (data.catName && $("#titulo")) $("#titulo").textContent = data.catName;
 
-    // 4) Restaurar UI y pintar
-    restoreFilters();
-    applyFilters();                // si no hay min/máx, muestra todos
-    const last = restoreSort();
-    last ? sortBy(last) : render(view);
-
-    // 5) Eventos de UI (orden/filtro/limpiar)
-    $("#btnAsc")   ?.addEventListener("click", () => { sortBy("asc");  applySearch(); });
-    $("#btnDesc")  ?.addEventListener("click", () => { sortBy("desc"); applySearch(); });
-    $("#btnRel")   ?.addEventListener("click", () => { sortBy("rel");  applySearch(); });
-    $("#btnFilter")?.addEventListener("click", () => { applyFilters(); applySearch(); });
-    $("#btnClear") ?.addEventListener("click", () => {
-      const minI = $("#minPrice");
-      const maxI = $("#maxPrice");
-      if (minI) minI.value = "";
-      if (maxI) maxI.value = "";
-      localStorage.removeItem(LS.MIN);
-      localStorage.removeItem(LS.MAX);
-      view = products.slice();
-      render(view);
-      applySearch(); // respeta término de búsqueda si quedó texto
-    });
-
-    // 6) Buscador en tiempo real
-    $("#searchBox")?.addEventListener("input", applySearch);
-
-    // 7) Delegación de click para abrir detalle
-    cont.addEventListener("click", handleOpenInfo);
+    recompute(); // pinta aplicando (precio + búsqueda + orden) que haya en estado
   } catch (e) {
-    cont.textContent = `Error cargando productos: ${e.message}`;
+    $("#productos-container").innerHTML =
+      `<div class="alert alert-danger">Error cargando productos: ${e.message}</div>`;
   }
 });
