@@ -11,7 +11,6 @@ const CAT_ID = localStorage.getItem("catID") || "101";
 const PRODUCTS_URL = `https://japceibal.github.io/emercado-api/cats_products/${CAT_ID}.json`;
 
 /* =================== Backups de imágenes =================== */
-// Backups confiables (Wikimedia/Unsplash) por NOMBRE EXACTO como viene en el JSON
 const backupImagesByName = {
   // --- JUGUETES (cat 102) ---
   "Oso de peluche":
@@ -36,7 +35,7 @@ const backupImagesByName = {
     "https://purepng.com/public/uploads/large/purepng.com-black-bugatti-chiron-carcarvehicletransportbugatti-961524653349rn5ct.png",
 };
 
-// Fallback genérico por categoría (si no hay por nombre)
+// Fallback genérico por categoría
 const categoryFallback = (() => {
   if (CAT_ID === "102") {
     return "https://images.unsplash.com/photo-1589739906089-6ce109f31f0b?auto=format&fit=crop&w=900&q=70"; // juguetes
@@ -51,74 +50,113 @@ const categoryFallback = (() => {
 const $ = (s) => document.querySelector(s);
 
 function joinRepo(path) {
-  // Une con la raíz del repo público si el path es relativo
   const p = String(path || "").replace(/^\/+/, "");
   return /^https?:\/\//i.test(p)
     ? p
     : `https://japceibal.github.io/emercado-api/${p}`;
 }
 function joinFromJson(path) {
-  // Une relativo al JSON (p.ej. .../cats_products/img/archivo.jpg)
   return /^https?:\/\//i.test(path)
     ? path
     : new URL(String(path || ""), PRODUCTS_URL).href;
 }
 
-// Escoge la mejor URL inicial para la imagen
 function pickImageURL(product) {
-  // Si tengo backup por NOMBRE (en Juguetes p.ej.), lo uso directo
   if (backupImagesByName[product.name]) return backupImagesByName[product.name];
-
-  // Si no, pruebo relativo al JSON; si el JSON dice "img/...", esto suele ser suficiente
   if (product.image) return joinFromJson(product.image);
-
-  // Último recurso inicial
   return categoryFallback;
 }
 
-/* =================== Estado (única fuente de verdad) =================== */
-let all = []; // lista original
+/* ============== Auto-descripciones por categoría ============== */
+function inferCategoriaDesdeNombre(catName) {
+  const s = String(catName || "").toLowerCase();
+  if (s.includes("auto")) return "autos";
+  if (s.includes("juguet")) return "juguetes";
+  if (s.includes("mueble")) return "muebles";
+  if (s.includes("comput")) return "computadoras";
+  return "otros";
+}
+
+function autoDescribe({ name, category, cost, currency = "USD", soldCount }) {
+  const cat = String(category || "").toLowerCase();
+  const precio = `${currency} ${cost}`;
+  const vendidos = Number.isFinite(soldCount) ? `, con ${soldCount} vendidos` : "";
+
+  if (cat.includes("auto")) {
+    return `${name} es un automóvil práctico y confiable, ideal para uso diario. Ofrece buena relación precio-prestaciones (${precio})${vendidos}, bajo mantenimiento y confort para ciudad o ruta.`;
+  }
+  if (cat.includes("juguet")) {
+    return `${name} es un juguete diseñado para entretenimiento creativo y seguro. Su construcción resistente y fácil uso lo vuelven una gran opción (${precio})${vendidos}.`;
+  }
+  if (cat.includes("mueble")) {
+    return `${name} es un mueble funcional con terminaciones cuidadas. Aporta estilo y practicidad al hogar u oficina, con materiales pensados para durar (${precio})${vendidos}.`;
+  }
+  if (cat.includes("comput")) {
+    return `${name} es un equipo orientado a estudio y productividad. Buen desempeño general, conectividad moderna y excelente relación costo-beneficio (${precio})${vendidos}.`;
+  }
+  return `${name} ofrece una propuesta equilibrada entre calidad y precio (${precio})${vendidos}.`;
+}
+
+/* =================== Estado =================== */
+let all = [];
 const state = {
   min: null,
   max: null,
-  q: "",                 // búsqueda
+  q: "",
   sort: localStorage.getItem("f_sort") || "rel", // 'asc' | 'desc' | 'rel'
+};
+
+/* ============ Selectores compatibles ============ */
+const UI = {
+  cont: () => $("#productos-container") || $("#products-list"),
+  title: () => $("#titulo") || $("#catTitle"),
+  btnAsc: () => $("#btnAsc") || $("#sortAsc"),
+  btnDesc: () => $("#btnDesc") || $("#sortDesc"),
+  btnRel: () => $("#btnRel") || $("#sortByRel"),
+  minPrice: () => $("#minPrice") || $("#rangeFilterCountMin"),
+  maxPrice: () => $("#maxPrice") || $("#rangeFilterCountMax"),
+  btnFilter: () => $("#btnFilter") || $("#rangeFilterCount"),
+  btnClear: () => $("#btnClear") || $("#clearRangeFilter"),
+  searchBox: () => $("#searchBox"),
+  emptyState: () => $("#emptyState"),
 };
 
 /* =================== Render =================== */
 function render(list) {
-  const cont = $("#productos-container");
+  const cont = UI.cont();
+  if (!cont) return;
+
   cont.innerHTML = list
     .map((p) => {
       const initial = pickImageURL(p);
-      // guardo data-* para el fallback escalonado
       const dataPath = (p.image || "").replace(/"/g, "&quot;");
       const dataName = p.name.replace(/"/g, "&quot;");
 
       return `
-      <article class="fila" data-id="${p.id}">
-        <figure class="thumb">
-          <img
-            src="${initial}"
-            alt="${dataName}"
-            loading="lazy"
-            referrerpolicy="no-referrer"
-            data-name="${dataName}"
-            data-path="${dataPath}"
-          >
-        </figure>
-        <div class="info">
-          <h2 class="nombre">${p.name} - UYU ${p.cost}</h2>
-          <div class="box">
-            <p class="desc">${p.description}</p>
-            <small class="vendidos">${p.soldCount} vendidos</small>
+      <article class="fila col" data-id="${p.id}" style="cursor:pointer">
+        <div class="card h-100 shadow-sm">
+          <figure class="thumb m-0">
+            <img
+              src="${initial}"
+              alt="${dataName}"
+              class="card-img-top"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              data-name="${dataName}"
+              data-path="${dataPath}"
+            >
+          </figure>
+          <div class="card-body">
+            <h5 class="card-title">${p.name} - ${p.currency || "USD"} ${p.cost}</h5>
+            <p class="card-text">${p.description}</p>
+            <small class="text-muted">${p.soldCount} vendidos</small>
           </div>
         </div>
       </article>`;
     })
     .join("");
 
-  // Fallbacks en cascada si igualmente falla
+  // Fallbacks escalonados
   cont.querySelectorAll("img[data-name]").forEach((img) => {
     let triedRepoBackup = false;
     let triedNameBackup = false;
@@ -128,40 +166,34 @@ function render(list) {
       const name = img.getAttribute("data-name") || "Producto";
       const path = img.getAttribute("data-path") || "";
 
-      // 1) raíz del repo (por si el JSON tenía path relativo)
       if (!triedRepoBackup && path) {
         triedRepoBackup = true;
         img.src = joinRepo(path);
         return;
       }
-      // 2) backup por nombre
       if (!triedNameBackup && backupImagesByName[name]) {
         triedNameBackup = true;
         img.src = backupImagesByName[name];
         return;
       }
-      // 3) fallback de categoría
       if (!triedCategory && categoryFallback) {
         triedCategory = true;
         img.src = categoryFallback;
         return;
       }
-      // 4) placeholder
       img.src = `https://placehold.co/800x480?text=${encodeURIComponent(name)}`;
     });
   });
 }
 
-/* =================== Lógica de filtros + orden + búsqueda =================== */
+/* =================== Filtros + orden + búsqueda =================== */
 function recompute() {
   let list = all.slice();
 
-  // precio
   const lo = Number.isFinite(state.min) ? state.min : -Infinity;
   const hi = Number.isFinite(state.max) ? state.max : Infinity;
   list = list.filter((p) => p.cost >= lo && p.cost <= hi);
 
-  // búsqueda en nombre + descripción
   if (state.q) {
     const q = state.q.toLowerCase();
     list = list.filter(
@@ -171,25 +203,25 @@ function recompute() {
     );
   }
 
-  // orden
   if (state.sort === "asc")   list.sort((a, b) => a.cost - b.cost);
   if (state.sort === "desc")  list.sort((a, b) => b.cost - a.cost);
   if (state.sort === "rel")   list.sort((a, b) => b.soldCount - a.soldCount);
 
   render(list);
+
+  const empty = UI.emptyState && UI.emptyState();
+  if (empty) empty.style.display = list.length ? "none" : "block";
 }
 
 /* =================== Eventos UI =================== */
 function wireUI() {
-  // Orden
-  $("#btnAsc")?.addEventListener("click", () => { state.sort = "asc";  localStorage.setItem("f_sort", "asc");  recompute(); });
-  $("#btnDesc")?.addEventListener("click", () => { state.sort = "desc"; localStorage.setItem("f_sort", "desc"); recompute(); });
-  $("#btnRel")?.addEventListener("click", () => { state.sort = "rel";  localStorage.setItem("f_sort", "rel");  recompute(); });
+  UI.btnAsc()?.addEventListener("click", () => { state.sort = "asc";  localStorage.setItem("f_sort", "asc");  recompute(); });
+  UI.btnDesc()?.addEventListener("click", () => { state.sort = "desc"; localStorage.setItem("f_sort", "desc"); recompute(); });
+  UI.btnRel()?.addEventListener("click", () => { state.sort = "rel";  localStorage.setItem("f_sort", "rel");  recompute(); });
 
-  // Filtro por precio
-  $("#btnFilter")?.addEventListener("click", () => {
-    const min = parseInt($("#minPrice")?.value ?? "", 10);
-    const max = parseInt($("#maxPrice")?.value ?? "", 10);
+  UI.btnFilter()?.addEventListener("click", () => {
+    const min = parseInt(UI.minPrice()?.value ?? "", 10);
+    const max = parseInt(UI.maxPrice()?.value ?? "", 10);
     state.min = Number.isFinite(min) ? min : null;
     state.max = Number.isFinite(max) ? max : null;
     localStorage.setItem("f_min", state.min ?? "");
@@ -197,70 +229,93 @@ function wireUI() {
     recompute();
   });
 
-  $("#btnClear")?.addEventListener("click", () => {
+  UI.btnClear()?.addEventListener("click", (e) => {
+    e.preventDefault?.();
     state.min = null;
     state.max = null;
-    if ($("#minPrice")) $("#minPrice").value = "";
-    if ($("#maxPrice")) $("#maxPrice").value = "";
+    if (UI.minPrice()) UI.minPrice().value = "";
+    if (UI.maxPrice()) UI.maxPrice().value = "";
     localStorage.removeItem("f_min");
     localStorage.removeItem("f_max");
     recompute();
   });
 
-  // Búsqueda en tiempo real
-  $("#searchBox")?.addEventListener("input", (e) => {
+  UI.searchBox()?.addEventListener("input", (e) => {
     state.q = (e.target.value || "").trim().toLowerCase();
     recompute();
   });
 
-  // Click -> detalle
-  $("#productos-container")?.addEventListener("click", (e) => {
+  // Guardar productID y redirigir a product-info.html
+  UI.cont()?.addEventListener("click", (e) => {
     const art = e.target.closest(".fila");
     if (!art) return;
-    localStorage.setItem("prodID", art.dataset.id);
+    localStorage.setItem("productID", art.dataset.id);
     location.href = "product-info.html";
   });
 }
 
 /* =================== Init =================== */
 document.addEventListener("DOMContentLoaded", async () => {
-  // Guardia de sesión + header
   requerirSesion();
   const badge = $("#usuarioActual");
   if (badge) badge.textContent = getUsuario() || "";
   $("#btnSalir")?.addEventListener("click", cerrarSesion);
 
-  // Restaurar UI de filtros y orden
   const minLS = localStorage.getItem("f_min");
   const maxLS = localStorage.getItem("f_max");
-  if (minLS && $("#minPrice")) $("#minPrice").value = minLS;
-  if (maxLS && $("#maxPrice")) $("#maxPrice").value = maxLS;
+  if (minLS && UI.minPrice()) UI.minPrice().value = minLS;
+  if (maxLS && UI.maxPrice()) UI.maxPrice().value = maxLS;
   state.min = minLS ? parseInt(minLS, 10) : null;
   state.max = maxLS ? parseInt(maxLS, 10) : null;
 
   wireUI();
 
   try {
-    // Soporta ambos formatos de getJSONData (data directa o {status,data})
     const res = await getJSONData(PRODUCTS_URL);
     const data = (res && typeof res === "object" && "data" in res) ? res.data : res;
     if (!data) throw new Error("Respuesta vacía");
 
     const list = Array.isArray(data) ? data : (data.products || []);
-    all = list.map((p) => ({
-      id: p.id,
-      name: p.name,
-      description: p.description,
-      cost: p.cost,
-      soldCount: p.soldCount,
-      image: p.image, // lo resolvemos en render/pickImageURL
-    }));
+    const catNombre = (data && data.catName) || "";
+    const catInferida = inferCategoriaDesdeNombre(catNombre);
 
-    if (data.catName && $("#titulo")) $("#titulo").textContent = data.catName;
+    all = list.map((p) => {
+      const currency = p.currency || data.currency || "USD";
+      const desc = p.description && p.description.trim().length
+        ? p.description
+        : autoDescribe({
+            name: p.name,
+            category: catInferida,
+            cost: p.cost,
+            currency,
+            soldCount: p.soldCount
+          });
 
-    recompute(); // pinta aplicando (precio + búsqueda + orden) que haya en estado
+      return {
+        id: p.id,
+        name: p.name,
+        description: desc,  // auto-descripción si falta
+        cost: p.cost,
+        soldCount: p.soldCount,
+        image: p.image,
+        currency
+      };
+    });
+
+    const t = UI.title();
+    if (data.catName && t) t.textContent = data.catName;
+
+    recompute();
   } catch (e) {
-    $("#productos-container").innerHTML =
-      `<div class="alert alert-danger">Error cargando productos: ${e.message}</div>`;
+    const cont = UI.cont();
+    if (cont) {
+      cont.innerHTML =
+        `<div class="alert alert-danger">Error cargando productos: ${e.message}</div>`;
+    }
+    const empty = UI.emptyState && UI.emptyState();
+    if (empty) {
+      empty.textContent = "No se pudo cargar la lista de productos.";
+      empty.style.display = "block";
+    }
   }
 });

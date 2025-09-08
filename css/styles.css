@@ -575,3 +575,7 @@ body.login-page #spinner-wrapper .lds-ring{
     margin-left:8px;
   }
 }
+/* css/productsinfo.css */
+#thumbs img { transition: transform .1s ease; }
+#thumbs img:hover { transform: scale(1.05); }
+#comments-container .list-group-item { border-radius: 10px; }

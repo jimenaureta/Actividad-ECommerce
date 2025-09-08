@@ -31,7 +31,6 @@
             <a class="nav-link" href="sell.html">Vender</a>
           </li>
           <li class="nav-item">
-            <!-- agregado: correo + botón salir a la derecha -->
             <span id="usuarioActual" class="user-badge"></span>
             <button id="btnSalir" class="salir-btn ms-2">Salir</button>
           </li>
@@ -79,8 +78,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="list-group" id="cat-list-container">
-        </div>
+        <div class="list-group" id="cat-list-container"></div>
       </div>
     </div>
   </main>
@@ -93,19 +91,13 @@
     </div>
   </footer>
   <div id="spinner-wrapper">
-    <div class="lds-ring">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
+    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
   </div>
 
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/init.js"></script>
   <script src="js/categories.js"></script>
 
-  <!-- agregado: pintar correo y cerrar sesión -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var badge = document.getElementById("usuarioActual");
@@ -114,7 +106,6 @@
       var btnSalir = document.getElementById("btnSalir");
       if (btnSalir) {
         btnSalir.addEventListener("click", function () {
-          // mismo efecto que cerrarSesion(): limpiar y volver al login
           sessionStorage.removeItem("sesionIniciada");
           sessionStorage.removeItem("usuario");
           location.href = "login.html";
@@ -122,6 +113,14 @@
       }
     });
   </script>
-</body>
 
+  <!-- Enlace de prueba corregido -->
+  <a href="product-info.html" onclick="verProducto(102)">Ver producto</a>
+  <script>
+    function verProducto(id){
+      localStorage.setItem("productID", id);
+      // el href ya lleva a product-info.html
+    }
+  </script>
+</body>
 </html>
