@@ -1,12 +1,9 @@
 // js/login.js
-import { iniciarSesion, sesionActiva } from "./common.js";
+import { iniciarSesion, redirigirSiLogueado } from "./common.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Si ya hay sesión activa, ir directo al inicio
-  if (sesionActiva()) {
-    location.href = "./index.html";
-    return;
-  }
+  // Si ya hay sesión, ir directo al inicio
+  redirigirSiLogueado("index.html");
 
   const form = document.getElementById("loginForm");
   form.addEventListener("submit", (e) => {

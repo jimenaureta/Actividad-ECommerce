@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>eMercado - Todo lo que busques está aquí</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eMercado - Inicio</title>
 
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -20,21 +19,13 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Mantengo tu layout original -->
         <ul class="navbar-nav w-100 justify-content-between">
-          <li class="nav-item">
-            <a class="nav-link active" href="index.html">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="categories.html">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell.html">Vender</a>
-          </li>
-
-          <!-- Aquí estaba el <li> vacío: lo usamos para el correo (extremo derecho) -->
-          <li class="nav-item d-flex align-items-center">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
+          <li class="nav-item d-flex align-items-center gap-2">
             <span id="usuarioActual" class="user-badge"></span>
+            <button id="btnSalir" class="btn btn-outline-light btn-sm" type="button">Salir</button>
           </li>
         </ul>
       </div>
@@ -48,8 +39,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="card mb-4 shadow-sm custom-card cursor-active" id="autos">
-              <img class="bd-placeholder-img card-img-top" src="img/cars_index.jpg"
-                alt="Imgagen representativa de la categoría 'Autos'">
+              <img class="bd-placeholder-img card-img-top" src="img/cars_index.jpg" alt="Imagen de la categoría Autos">
               <h3 class="m-3">Autos</h3>
               <div class="card-body">
                 <p class="card-text">Los mejores precios en autos 0 kilómetro, de alta y media gama.</p>
@@ -58,8 +48,7 @@
           </div>
           <div class="col-md-4">
             <div class="card mb-4 shadow-sm custom-card cursor-active" id="juguetes">
-              <img class="bd-placeholder-img card-img-top" src="img/toys_index.jpg"
-                alt="Imgagen representativa de la categoría 'Juguetes'">
+              <img class="bd-placeholder-img card-img-top" src="img/toys_index.jpg" alt="Imagen de la categoría Juguetes">
               <h3 class="m-3">Juguetes</h3>
               <div class="card-body">
                 <p class="card-text">Encuentra aquí los mejores precios para niños/as de cualquier edad.</p>
@@ -68,18 +57,15 @@
           </div>
           <div class="col-md-4">
             <div class="card mb-4 shadow-sm custom-card cursor-active" id="muebles">
-              <img class="bd-placeholder-img card-img-top" src="img/furniture_index.jpg"
-                alt="Imgagen representativa de la categoría 'Muebles'">
+              <img class="bd-placeholder-img card-img-top" src="img/furniture_index.jpg" alt="Imagen de la categoría Muebles">
               <h3 class="m-3">Muebles</h3>
               <div class="card-body">
-                <p class="card-text">Muebles antiguos, nuevos y para ser armados por uno mismo.</p>
+                <p class="card-text">Muebles antiguos, nuevos y para armar.</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="row">
-          <a class="btn btn-light btn-lg btn-block" href="categories.html">Y mucho más!</a>
-        </div>
+        <div class="row"><a class="btn btn-light btn-lg btn-block" href="categories.html">¡Y mucho más!</a></div>
       </div>
     </div>
   </main>
@@ -87,23 +73,14 @@
   <footer class="text-muted">
     <div class="container">
       <p class="float-end"><a href="#">Volver arriba</a></p>
-      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank" rel="noopener">Jóvenes a Programar</a></p>
     </div>
   </footer>
 
   <script src="js/bootstrap.bundle.min.js"></script>
-  <script src="js/index.js"></script>
-  <script src="js/init.js"></script>
-
-  <!-- Pinta el correo guardado en sessionStorage["usuario"] -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var badge = document.getElementById("usuarioActual");
-      if (badge) {
-        var u = sessionStorage.getItem("usuario") || "";
-        badge.textContent = u;
-      }
-    });
-  </script>
+  <!-- Bootstrap de sesión + navbar centralizado -->
+  <script type="module" src="js/init.js"></script>
+  <!-- Tu lógica propia de index si la tienes -->
+  <script type="module" src="js/index.js"></script>
 </body>
 </html>

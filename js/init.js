@@ -1,61 +1,21 @@
 // js/init.js
-// ====== BLOQUE NUEVO (redirige a login si no hay sesión) ======
-(() => {
-  const isLogin = /(^|\/)login\.html$/i.test(location.pathname);
-  const tieneSesion = sessionStorage.getItem("sesionIniciada") === "true";
-  if (!isLogin && !tieneSesion) {
-    location.href = "login.html";
-  }
-})();
-// ====== FIN BLOQUE NUEVO ======
+import {
+  initApp,
+  // Bridge de compatibilidad:
+  getJSONData, showSpinner, hideSpinner,
+  CATEGORIES_URL, PUBLISH_PRODUCT_URL, PRODUCTS_BASE_URL,
+  PRODUCT_INFO_URL, PRODUCT_INFO_COMMENTS_URL,
+  CART_INFO_URL, CART_BUY_URL, EXT_TYPE
+} from "./common.js";
 
-// (lo demás queda igual)
-const CATEGORIES_URL = "https://japceibal.github.io/emercado-api/cats/cat.json";
-const PUBLISH_PRODUCT_URL = "https://japceibal.github.io/emercado-api/sell/publish.json";
-const PRODUCTS_URL = "https://japceibal.github.io/emercado-api/cats_products/";
-const PRODUCT_INFO_URL = "https://japceibal.github.io/emercado-api/products/";
-const PRODUCT_INFO_COMMENTS_URL = "https://japceibal.github.io/emercado-api/products_comments/";
-const CART_INFO_URL = "https://japceibal.github.io/emercado-api/user_cart/";
-const CART_BUY_URL = "https://japceibal.github.io/emercado-api/cart/buy.json";
-const EXT_TYPE = ".json";
+// Protege todas las páginas privadas (todas menos login.html)
+initApp({ requiereSesion: true, navbarBadgeSel: "#usuarioActual", btnSalirSel: "#btnSalir" });
 
-let showSpinner = function(){
-  document.getElementById("spinner-wrapper").style.display = "block";
-}
-
-let hideSpinner = function(){
-  document.getElementById("spinner-wrapper").style.display = "none";
-}
-
-let getJSONData = function(url){
-  let result = {};
-  showSpinner();
-  return fetch(url)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw Error(response.statusText);
-      }
-    })
-    .then(function(response) {
-      result.status = 'ok';
-      result.data = response;
-      hideSpinner();
-      return result;
-    })
-    .catch(function(error) {
-      result.status = 'error';
-      result.data = error;
-      hideSpinner();
-      return result;
-    });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const badge = document.getElementById("usuarioActual");
-  if (badge) {
-    const u = sessionStorage.getItem("usuario") || "";
-    badge.textContent = u;
-  }
+// ---- BRIDGE GLOBAL para scripts legacy (no-module) ----
+Object.assign(window, {
+  getJSONData, showSpinner, hideSpinner,
+  CATEGORIES_URL, PUBLISH_PRODUCT_URL,
+  PRODUCTS_URL: PRODUCTS_BASE_URL, // alias clásico
+  PRODUCT_INFO_URL, PRODUCT_INFO_COMMENTS_URL,
+  CART_INFO_URL, CART_BUY_URL, EXT_TYPE
 });

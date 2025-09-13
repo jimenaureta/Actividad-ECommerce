@@ -1,146 +1,108 @@
-// js/categories.js
+// js/categories.js (ES module)
+import { getJSONData, CATEGORIES_URL } from "./common.js";
 
 const ORDER_ASC_BY_NAME = "AZ";
 const ORDER_DESC_BY_NAME = "ZA";
 const ORDER_BY_PROD_COUNT = "Cant.";
+
 let currentCategoriesArray = [];
-let currentSortCriteria = undefined;
+let currentSortCriteria = ORDER_ASC_BY_NAME;
 let minCount = undefined;
 let maxCount = undefined;
 
 function sortCategories(criteria, array) {
-  let result = [];
+  const arr = array.slice(); // no mutar original
   if (criteria === ORDER_ASC_BY_NAME) {
-    result = array.sort(function (a, b) {
-      if (a.name < b.name) { return -1; }
-      if (a.name > b.name) { return 1; }
-      return 0;
-    });
+    return arr.sort((a, b) => a.name.localeCompare(b.name));
   } else if (criteria === ORDER_DESC_BY_NAME) {
-    result = array.sort(function (a, b) {
-      if (a.name > b.name) { return -1; }
-      if (a.name < b.name) { return 1; }
-      return 0;
-    });
+    return arr.sort((a, b) => b.name.localeCompare(a.name));
   } else if (criteria === ORDER_BY_PROD_COUNT) {
-    result = array.sort(function (a, b) {
-      let aCount = parseInt(a.productCount);
-      let bCount = parseInt(b.productCount);
-
-      if (aCount > bCount) { return -1; }
-      if (aCount < bCount) { return 1; }
-      return 0;
-    });
+    return arr.sort((a, b) => (parseInt(b.productCount) || 0) - (parseInt(a.productCount) || 0));
   }
-  return result;
+  return arr;
 }
 
-// Guarda el id de la categoría y navega a products.html
+// Guarda catID y navega
 function setCatID(id) {
-  localStorage.setItem("catID", String(id)); // guardar como string por consistencia
-  window.location = "products.html";
+  localStorage.setItem("catID", String(id));
+  window.location.href = "products.html";
 }
-// Exponer global para que funcione el onclick inline
-window.setCatID = setCatID;
+window.setCatID = setCatID; // si sigues usando onclick inline
 
 function showCategoriesList() {
-  let htmlContentToAppend = "";
-  for (let i = 0; i < currentCategoriesArray.length; i++) {
-    let category = currentCategoriesArray[i];
+  const cont = document.getElementById("cat-list-container");
+  if (!cont) return;
 
-    if (
-      ((minCount == undefined) ||
-        (minCount != undefined && parseInt(category.productCount) >= minCount)) &&
-      ((maxCount == undefined) ||
-        (maxCount != undefined && parseInt(category.productCount) <= maxCount))
-    ) {
-      htmlContentToAppend += `
-        <div onclick="setCatID(${category.id})" class="list-group-item list-group-item-action cursor-active">
-          <div class="row">
-            <div class="col-3">
-              <img src="${category.imgSrc}" alt="${category.description}" class="img-thumbnail">
+  let html = "";
+  for (const category of currentCategoriesArray) {
+    const count = parseInt(category.productCount) || 0;
+
+    const pasaMin = (minCount === undefined) || (count >= minCount);
+    const pasaMax = (maxCount === undefined) || (count <= maxCount);
+    if (!(pasaMin && pasaMax)) continue;
+
+    html += `
+      <div onclick="setCatID(${category.id})" class="list-group-item list-group-item-action cursor-active">
+        <div class="row">
+          <div class="col-3">
+            <img src="${category.imgSrc}" alt="${category.description}" class="img-thumbnail">
+          </div>
+          <div class="col">
+            <div class="d-flex w-100 justify-content-between">
+              <h4 class="mb-1">${category.name}</h4>
+              <small class="text-muted">${count} artículos</small>
             </div>
-            <div class="col">
-              <div class="d-flex w-100 justify-content-between">
-                <h4 class="mb-1">${category.name}</h4>
-                <small class="text-muted">${category.productCount} artículos</small>
-              </div>
-              <p class="mb-1">${category.description}</p>
-            </div>
+            <p class="mb-1">${category.description}</p>
           </div>
         </div>
-      `;
-    }
-
-    document.getElementById("cat-list-container").innerHTML = htmlContentToAppend;
+      </div>
+    `;
   }
+  cont.innerHTML = html;
 }
 
 function sortAndShowCategories(sortCriteria, categoriesArray) {
-  currentSortCriteria = sortCriteria;
+  currentSortCriteria = sortCriteria ?? currentSortCriteria;
+  if (Array.isArray(categoriesArray)) currentCategoriesArray = categoriesArray;
 
-  if (categoriesArray != undefined) {
-    currentCategoriesArray = categoriesArray;
-  }
-
-  currentCategoriesArray = sortCategories(
-    currentSortCriteria,
-    currentCategoriesArray
-  );
-
-  // Muestro las categorías ordenadas
+  currentCategoriesArray = sortCategories(currentSortCriteria, currentCategoriesArray);
   showCategoriesList();
 }
 
-// Función que se ejecuta una vez que el documento está cargado
-document.addEventListener("DOMContentLoaded", function (e) {
-  getJSONData(CATEGORIES_URL).then(function (resultObj) {
-    if (resultObj.status === "ok") {
-      currentCategoriesArray = resultObj.data;
-      showCategoriesList();
-      // sortAndShowCategories(ORDER_ASC_BY_NAME, resultObj.data);
-    }
-  });
-
-  document.getElementById("sortAsc").addEventListener("click", function () {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Cargar datos
+  const res = await getJSONData(CATEGORIES_URL);
+  if (res.status === "ok") {
+    currentCategoriesArray = res.data || [];
     sortAndShowCategories(ORDER_ASC_BY_NAME);
-  });
+  } else {
+    console.error("Error cargando categorías:", res.data);
+  }
 
-  document.getElementById("sortDesc").addEventListener("click", function () {
-    sortAndShowCategories(ORDER_DESC_BY_NAME);
-  });
+  // Wire de controles
+  document.getElementById("sortAsc")?.addEventListener("click", () => sortAndShowCategories(ORDER_ASC_BY_NAME));
+  document.getElementById("sortDesc")?.addEventListener("click", () => sortAndShowCategories(ORDER_DESC_BY_NAME));
+  document.getElementById("sortByCount")?.addEventListener("click", () => sortAndShowCategories(ORDER_BY_PROD_COUNT));
 
-  document.getElementById("sortByCount").addEventListener("click", function () {
-    sortAndShowCategories(ORDER_BY_PROD_COUNT);
-  });
-
-  document.getElementById("clearRangeFilter").addEventListener("click", function () {
-    document.getElementById("rangeFilterCountMin").value = "";
-    document.getElementById("rangeFilterCountMax").value = "";
-
+  document.getElementById("clearRangeFilter")?.addEventListener("click", () => {
+    const minI = document.getElementById("rangeFilterCountMin");
+    const maxI = document.getElementById("rangeFilterCountMax");
+    if (minI) minI.value = "";
+    if (maxI) maxI.value = "";
     minCount = undefined;
     maxCount = undefined;
-
     showCategoriesList();
   });
 
-  document.getElementById("rangeFilterCount").addEventListener("click", function () {
-    // Obtengo el mínimo y máximo de los intervalos para filtrar por cantidad
-    // de productos por categoría.
-    minCount = document.getElementById("rangeFilterCountMin").value;
-    maxCount = document.getElementById("rangeFilterCountMax").value;
+  document.getElementById("rangeFilterCount")?.addEventListener("click", () => {
+    const minI = document.getElementById("rangeFilterCountMin");
+    const maxI = document.getElementById("rangeFilterCountMax");
 
-    if ((minCount != undefined) && (minCount != "") && (parseInt(minCount)) >= 0) {
-      minCount = parseInt(minCount);
-    } else {
-      minCount = undefined;
-    }
+    const minVal = parseInt(minI?.value ?? "", 10);
+    const maxVal = parseInt(maxI?.value ?? "", 10);
 
-    if ((maxCount != undefined) && (maxCount != "") && (parseInt(maxCount)) >= 0) {
-      maxCount = parseInt(maxCount);
-    } else {
-      maxCount = undefined;
-    }
+    minCount = Number.isFinite(minVal) && minVal >= 0 ? minVal : undefined;
+    maxCount = Number.isFinite(maxVal) && maxVal >= 0 ? maxVal : undefined;
 
     showCategoriesList();
   });

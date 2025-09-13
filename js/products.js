@@ -1,10 +1,5 @@
-// js/products.js
-import {
-  getJSONData,
-  requerirSesion,
-  cerrarSesion,
-  getUsuario,
-} from "./common.js";
+// js/products.js  (ES module)
+import { getJSONData } from "./common.js";
 
 /* =================== Config / URLs =================== */
 const CAT_ID = localStorage.getItem("catID") || "101";
@@ -121,42 +116,69 @@ const UI = {
   emptyState: () => $("#emptyState"),
 };
 
-/* =================== Render =================== */
+/* =================== Render (semántico) =================== */
 function render(list) {
   const cont = UI.cont();
   if (!cont) return;
 
+  cont.setAttribute("role", "list");
   cont.innerHTML = list
     .map((p) => {
       const initial = pickImageURL(p);
       const dataPath = (p.image || "").replace(/"/g, "&quot;");
       const dataName = p.name.replace(/"/g, "&quot;");
+      const soldText = Number.isFinite(p.soldCount) ? `${p.soldCount} vendidos` : "—";
+      const currency = p.currency || "USD";
 
       return `
-      <article class="fila col" data-id="${p.id}" style="cursor:pointer">
+      <article
+        class="fila col-12 col-sm-6 col-lg-4"
+        data-id="${p.id}"
+        role="listitem"
+        tabindex="0"
+        aria-label="${dataName}, ${currency} ${p.cost}"
+        data-price="${p.cost}"
+        data-sold="${p.soldCount ?? 0}"
+        style="cursor:pointer"
+      >
         <div class="card h-100 shadow-sm">
-          <figure class="thumb m-0">
+          <header class="card-header d-flex justify-content-between align-items-start gap-2">
+            <h3 class="h6 lh-sm m-0">${p.name}</h3>
+            <span class="badge text-bg-light" title="Unidades vendidas" aria-label="Vendidos: ${p.soldCount ?? 0}">
+              ${soldText}
+            </span>
+          </header>
+
+          <figure class="m-0">
             <img
               src="${initial}"
-              alt="${dataName}"
+              alt="Imagen de ${dataName}"
               class="card-img-top"
               loading="lazy"
               referrerpolicy="no-referrer"
               data-name="${dataName}"
               data-path="${dataPath}"
             >
+            <figcaption class="small text-muted px-3 pt-1">Producto</figcaption>
           </figure>
-          <div class="card-body">
-            <h5 class="card-title">${p.name} - ${p.currency || "USD"} ${p.cost}</h5>
-            <p class="card-text">${p.description}</p>
-            <small class="text-muted">${p.soldCount} vendidos</small>
-          </div>
+
+          <section class="card-body">
+            <p class="card-text text-body-secondary mb-3">${p.description}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="fw-bold m-0">
+                <data value="${p.cost}">${currency} ${p.cost}</data>
+              </p>
+              <a href="product-info.html" class="btn btn-primary btn-sm" aria-label="Ver detalle de ${dataName}">
+                Ver detalle
+              </a>
+            </div>
+          </section>
         </div>
       </article>`;
     })
     .join("");
 
-  // Fallbacks escalonados
+  // fallbacks de imagen
   cont.querySelectorAll("img[data-name]").forEach((img) => {
     let triedRepoBackup = false;
     let triedNameBackup = false;
@@ -166,21 +188,9 @@ function render(list) {
       const name = img.getAttribute("data-name") || "Producto";
       const path = img.getAttribute("data-path") || "";
 
-      if (!triedRepoBackup && path) {
-        triedRepoBackup = true;
-        img.src = joinRepo(path);
-        return;
-      }
-      if (!triedNameBackup && backupImagesByName[name]) {
-        triedNameBackup = true;
-        img.src = backupImagesByName[name];
-        return;
-      }
-      if (!triedCategory && categoryFallback) {
-        triedCategory = true;
-        img.src = categoryFallback;
-        return;
-      }
+      if (!triedRepoBackup && path) { triedRepoBackup = true; img.src = joinRepo(path); return; }
+      if (!triedNameBackup && backupImagesByName[name]) { triedNameBackup = true; img.src = backupImagesByName[name]; return; }
+      if (!triedCategory && categoryFallback) { triedCategory = true; img.src = categoryFallback; return; }
       img.src = `https://placehold.co/800x480?text=${encodeURIComponent(name)}`;
     });
   });
@@ -197,9 +207,7 @@ function recompute() {
   if (state.q) {
     const q = state.q.toLowerCase();
     list = list.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q)
+      (p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
     );
   }
 
@@ -231,12 +239,10 @@ function wireUI() {
 
   UI.btnClear()?.addEventListener("click", (e) => {
     e.preventDefault?.();
-    state.min = null;
-    state.max = null;
+    state.min = null; state.max = null;
     if (UI.minPrice()) UI.minPrice().value = "";
     if (UI.maxPrice()) UI.maxPrice().value = "";
-    localStorage.removeItem("f_min");
-    localStorage.removeItem("f_max");
+    localStorage.removeItem("f_min"); localStorage.removeItem("f_max");
     recompute();
   });
 
@@ -245,22 +251,26 @@ function wireUI() {
     recompute();
   });
 
-  // Guardar productID y redirigir a product-info.html
   UI.cont()?.addEventListener("click", (e) => {
     const art = e.target.closest(".fila");
     if (!art) return;
     localStorage.setItem("productID", art.dataset.id);
     location.href = "product-info.html";
   });
+
+  UI.cont()?.addEventListener("keydown", (e) => {
+    const art = e.target.closest('.fila[tabindex]');
+    if (!art) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      localStorage.setItem("productID", art.dataset.id);
+      location.href = "product-info.html";
+    }
+  });
 }
 
 /* =================== Init =================== */
 document.addEventListener("DOMContentLoaded", async () => {
-  requerirSesion();
-  const badge = $("#usuarioActual");
-  if (badge) badge.textContent = getUsuario() || "";
-  $("#btnSalir")?.addEventListener("click", cerrarSesion);
-
   const minLS = localStorage.getItem("f_min");
   const maxLS = localStorage.getItem("f_max");
   if (minLS && UI.minPrice()) UI.minPrice().value = minLS;
@@ -271,10 +281,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   wireUI();
 
   try {
+    // ⬇️ IMPORTANTE: manejar el envoltorio {status, data}
     const res = await getJSONData(PRODUCTS_URL);
-    const data = (res && typeof res === "object" && "data" in res) ? res.data : res;
-    if (!data) throw new Error("Respuesta vacía");
+    if (res.status !== "ok") throw new Error(res.data?.message || "Error HTTP");
 
+    const data = res.data; // JSON real
     const list = Array.isArray(data) ? data : (data.products || []);
     const catNombre = (data && data.catName) || "";
     const catInferida = inferCategoriaDesdeNombre(catNombre);
@@ -283,23 +294,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const currency = p.currency || data.currency || "USD";
       const desc = p.description && p.description.trim().length
         ? p.description
-        : autoDescribe({
-            name: p.name,
-            category: catInferida,
-            cost: p.cost,
-            currency,
-            soldCount: p.soldCount
-          });
+        : autoDescribe({ name: p.name, category: catInferida, cost: p.cost, currency, soldCount: p.soldCount });
 
-      return {
-        id: p.id,
-        name: p.name,
-        description: desc,  // auto-descripción si falta
-        cost: p.cost,
-        soldCount: p.soldCount,
-        image: p.image,
-        currency
-      };
+      return { id: p.id, name: p.name, description: desc, cost: p.cost, soldCount: p.soldCount, image: p.image, currency };
     });
 
     const t = UI.title();
@@ -308,14 +305,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     recompute();
   } catch (e) {
     const cont = UI.cont();
-    if (cont) {
-      cont.innerHTML =
-        `<div class="alert alert-danger">Error cargando productos: ${e.message}</div>`;
-    }
+    if (cont) cont.innerHTML = `<div class="alert alert-danger">Error cargando productos: ${e.message}</div>`;
     const empty = UI.emptyState && UI.emptyState();
-    if (empty) {
-      empty.textContent = "No se pudo cargar la lista de productos.";
-      empty.style.display = "block";
-    }
+    if (empty) { empty.textContent = "No se pudo cargar la lista de productos."; empty.style.display = "block"; }
+    console.error(e);
   }
 });

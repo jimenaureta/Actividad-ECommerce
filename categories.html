@@ -1,126 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>eMercado - Todo lo que busques está aquí</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eMercado - Categorías</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
-  <link href="css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/styles.css" rel="stylesheet">
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
     <div class="container">
+      <a class="navbar-brand" href="index.html">eMercado</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav w-100 justify-content-between">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="categories.html">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell.html">Vender</a>
-          </li>
-          <li class="nav-item">
-            <span id="usuarioActual" class="user-badge"></span>
-            <button id="btnSalir" class="salir-btn ms-2">Salir</button>
-          </li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link active" href="categories.html">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
         </ul>
+        <div class="d-flex align-items-center gap-2">
+          <span id="usuarioActual" class="badge bg-secondary"></span>
+          <button id="btnSalir" class="btn btn-outline-light btn-sm" type="button">Salir</button>
+        </div>
       </div>
     </div>
   </nav>
-  <main class="pb-5">
-    <div class="text-center p-4">
-      <h2>Categorías</h2>
-      <p class="lead">Verás aquí todas las categorías del sitio.</p>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col text-end">
-          <div class="btn-group btn-group-toggle mb-4" data-bs-toggle="buttons">
-            <input type="radio" class="btn-check" name="options" id="sortAsc">
-            <label class="btn btn-light" for="sortAsc">A-Z</label>
-            <input type="radio" class="btn-check" name="options" id="sortDesc">
-            <label class="btn btn-light" for="sortDesc">Z-A</label>
-            <input type="radio" class="btn-check" name="options" id="sortByCount" checked>
-            <label class="btn btn-light" for="sortByCount"><i class="fas fa-sort-amount-down mr-1"></i></label>
-          </div>
-        </div>
+
+  <main class="container py-4">
+    <header class="text-center mb-3">
+      <h1 class="h2">Categorías</h1>
+      <p class="text-muted">Verás aquí todas las categorías del sitio.</p>
+    </header>
+
+    <section class="d-flex flex-wrap align-items-center gap-2 mb-3">
+      <div class="btn-group" role="group" aria-label="Ordenar">
+        <button id="sortAsc" class="btn btn-outline-secondary btn-sm" type="button">A-Z</button>
+        <button id="sortDesc" class="btn btn-outline-secondary btn-sm" type="button">Z-A</button>
+        <button id="sortByCount" class="btn btn-outline-secondary btn-sm" type="button">
+          <span aria-hidden="true">▦</span> Cant.
+        </button>
       </div>
-      <div class="row">
-        <div class="col-lg-6 offset-lg-6 col-md-12 mb-1 container">
-          <div class="row container p-0 m-0">
-            <div class="col">
-              <p class="font-weight-normal text-end my-2">Cant.</p>
-            </div>
-            <div class="col">
-              <input class="form-control" type="number" placeholder="min." id="rangeFilterCountMin">
-            </div>
-            <div class="col">
-              <input class="form-control" type="number" placeholder="máx." id="rangeFilterCountMax">
-            </div>
-            <div class="col-3 p-0">
-              <div class="btn-group" role="group">
-                <button class="btn btn-light btn-block" id="rangeFilterCount">Filtrar</button>
-                <button class="btn btn-link btn-sm" id="clearRangeFilter">Limpiar</button>
-              </div>
-            </div>
-          </div>
-        </div>
+
+      <span class="ms-2">Cant.</span>
+      <div class="input-group input-group-sm" style="width: 11rem;">
+        <span class="input-group-text">min.</span>
+        <input id="rangeFilterCountMin" type="number" class="form-control" inputmode="numeric">
       </div>
-      <div class="row">
-        <div class="list-group" id="cat-list-container"></div>
+      <div class="input-group input-group-sm" style="width: 11rem;">
+        <span class="input-group-text">máx.</span>
+        <input id="rangeFilterCountMax" type="number" class="form-control" inputmode="numeric">
       </div>
-    </div>
+
+      <button id="rangeFilterCount" class="btn btn-primary btn-sm" type="button">Filtrar</button>
+      <button id="clearRangeFilter" class="btn btn-link btn-sm" type="button">Limpiar</button>
+    </section>
+
+    <!-- Contenedor del listado -->
+    <section id="cat-list-container" class="list-group" aria-live="polite"></section>
   </main>
-  <footer class="text-muted">
+
+  <footer class="text-muted py-3 border-top">
     <div class="container">
-      <p class="float-end">
-        <a href="#">Volver arriba</a>
-      </p>
-      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+      <p class="float-end"><a href="#top">Volver arriba</a></p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank" rel="noopener">Jóvenes a Programar</a></p>
     </div>
   </footer>
-  <div id="spinner-wrapper">
-    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+
+  <!-- Spinner global -->
+  <div id="spinner-wrapper" class="position-fixed top-0 start-0 w-100 h-100 d-none"
+       role="status" aria-live="polite" aria-label="Cargando">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <div class="spinner-border" role="status" aria-hidden="true"></div>
+    </div>
   </div>
 
-  <script src="js/bootstrap.bundle.min.js"></script>
-  <script src="js/init.js"></script>
-  <script src="js/categories.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var badge = document.getElementById("usuarioActual");
-      if (badge) badge.textContent = sessionStorage.getItem("usuario") || "";
-
-      var btnSalir = document.getElementById("btnSalir");
-      if (btnSalir) {
-        btnSalir.addEventListener("click", function () {
-          sessionStorage.removeItem("sesionIniciada");
-          sessionStorage.removeItem("usuario");
-          location.href = "login.html";
-        });
-      }
-    });
-  </script>
-
-  <!-- Enlace de prueba corregido -->
-  <a href="product-info.html" onclick="verProducto(102)">Ver producto</a>
-  <script>
-    function verProducto(id){
-      localStorage.setItem("productID", id);
-      // el href ya lleva a product-info.html
-    }
-  </script>
+  <!-- IMPORTANTE: ambos como módulos -->
+  <script type="module" src="js/init.js"></script>
+  <script type="module" src="js/categories.js"></script>
 </body>
 </html>
