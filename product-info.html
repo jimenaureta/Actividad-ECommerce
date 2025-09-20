@@ -2,85 +2,112 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Detalle de producto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>eMercado - Información de producto</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <!-- Font Awesome (tu proyecto ya lo usa) -->
   <link href="css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/styles.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/productsinfo.css" />
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
-    <div class="container">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir navegación">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
-          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
-        </ul>
-        <div class="d-flex align-items-center gap-2">
-          <span id="usuarioActual" class="badge rounded-pill bg-secondary px-3 py-2">user@mail.com</span>
-          <button id="btnSalir" class="btn btn-light btn-sm">Salir</button>
+  <!-- NAVBAR (mantiene el email del usuario) -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1" aria-label="Barra de navegación principal">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">eMercado</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
+            <li class="nav-item"><a class="nav-link" href="products.html">Productos</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Detalle</a></li>
+          </ul>
+          <span class="navbar-text text-white small">
+            <i class="fa fa-user-circle-o me-1" aria-hidden="true"></i>
+            <span id="usuarioActual">usuario@ejemplo.com</span>
+          </span>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <main class="container my-4">
-    <div class="d-flex align-items-baseline justify-content-between mb-3">
-      <h1 id="productName" class="display-6 fw-bold text-dark">Producto</h1>
-      <span id="productCategory" class="text-muted"></span>
+    <!-- Encabezado del producto -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 id="productName" class="h3 mb-1">Nombre del producto</h1>
+        <div class="text-muted">
+          <span id="productCategory">Categoría</span> ·
+          <span id="productSoldCount">0 vendidos</span>
+        </div>
+      </div>
+      <div class="text-end">
+        <div id="productCostBig" class="h3 mb-0">USD 0</div>
+      </div>
     </div>
 
-    <div class="mb-3">
-      <span id="productSoldCount" class="badge bg-light text-dark me-2"></span>
-      <span id="productCost" class="badge bg-primary"></span>
-    </div>
-
+    <!-- Galería -->
     <div class="row g-4">
       <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
-          <img id="imageMain" class="card-img-top" alt="Imagen principal">
+          <img id="imageMain" class="card-img-top" src="" alt="Imagen del producto">
           <div class="card-body">
             <div id="thumbs" class="d-flex flex-wrap gap-2"></div>
           </div>
         </div>
       </div>
-
       <div class="col-12 col-lg-6">
         <div class="card shadow-sm h-100">
           <div class="card-body">
-            <h2 class="h5 mb-3">Descripción</h2>
-            <p id="productDescription" class="mb-4"></p>
-            <div class="d-flex align-items-center gap-3">
-              <span class="fs-4 fw-semibold" id="productCostBig"></span>
-              <span class="text-muted" id="productCurrency"></span>
-            </div>
+            <h2 class="h5">Descripción</h2>
+            <p id="productDescription" class="mb-3">—</p>
+            <hr>
+            <dl class="row mb-0">
+              <dt class="col-4">Precio</dt>
+              <dd class="col-8 mb-2"><span id="productCost">USD 0</span></dd>
+              <dt class="col-4">Moneda</dt>
+              <dd class="col-8 mb-2"><span id="productCurrency">USD</span></dd>
+            </dl>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Productos relacionados -->
     <section class="mt-5">
       <h3 class="h5 mb-3">Productos relacionados</h3>
       <div id="relatedProducts" class="row g-3"></div>
     </section>
 
+    <!-- Comentarios + Formulario -->
     <section class="mt-5">
       <h3 class="h5 mb-3">Comentarios</h3>
+
+      <!-- Resumen de calificaciones con barras de progreso -->
+      <div id="rating-summary" class="card p-3 mb-3 shadow-sm">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span id="avgScore" class="display-6 fw-bold">0.0</span>
+          <div id="avgStars" class="fs-4" aria-label="promedio en estrellas"></div>
+          <small id="ratingsCount" class="text-muted">(0 calificaciones)</small>
+        </div>
+        <div id="ratingBars" class="vstack gap-2"></div>
+      </div>
+
+      <!-- Lista de comentarios -->
       <div id="comments-container" class="list-group mb-3"></div>
-      <form id="add-comment" class="card p-3 shadow-sm">
+
+      <!-- Formulario de nueva reseña -->
+      <form id="add-comment" class="card p-3 shadow-sm" novalidate>
         <div class="mb-2">
           <label for="comment-text" class="form-label">Tu comentario</label>
-          <textarea id="comment-text" class="form-control" rows="3" placeholder="Escribe aquí..."></textarea>
+          <textarea id="comment-text" class="form-control" rows="3" placeholder="Escribe aquí..." required></textarea>
+          <div class="invalid-feedback">Por favor, escribe un comentario.</div>
         </div>
         <div class="mb-3">
           <label for="comment-score" class="form-label">Puntuación</label>
@@ -92,158 +119,17 @@
             <option value="1">1 ★☆☆☆☆</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary">Publicar</button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa fa-paper-plane" aria-hidden="true"></i> Enviar
+        </button>
       </form>
     </section>
   </main>
 
-  <footer class="text-muted">
-    <div class="container">
-      <p class="float-end"><a href="#">Volver arriba</a></p>
-      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jóvenes a Programar</a></p>
-    </div>
-  </footer>
-
-  <div id="spinner-wrapper" style="display:none">
-    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-  </div>
-
-  <script src="js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="js/common.js"></script>
   <script src="js/init.js"></script>
-  <script src="js/products-info.js"></script>
-
-  <!-- Fallback: lógica completa inline por si no cargó js/products-info.js -->
-<script>
-(function(){
-  const $ = s => document.querySelector(s);
-
-  // UI rápida de error visible
-  function showError(msg){
-    const cont = document.createElement('div');
-    cont.className = 'alert alert-danger mt-3';
-    cont.textContent = msg;
-    document.querySelector('main .container, main.container')?.appendChild(cont);
-  }
-
-  // Autodescripción por categoría (Autos/Juguetes/Muebles/Computadoras)
-  function autoDescribe({ name, category, cost, currency = "USD", soldCount }){
-    const cat = String(category || "").toLowerCase();
-    const precio = `${currency} ${cost}`;
-    const vendidos = Number.isFinite(soldCount) ? `, con ${soldCount} vendidos` : "";
-    if (cat.includes("auto"))   return `${name} es un automóvil práctico y confiable. Buena relación precio-prestaciones (${precio})${vendidos}.`;
-    if (cat.includes("juguet")) return `${name} es un juguete pensado para entretenimiento creativo y seguro (${precio})${vendidos}.`;
-    if (cat.includes("mueble")) return `${name} es un mueble funcional y resistente, ideal para el hogar u oficina (${precio})${vendidos}.`;
-    if (cat.includes("comput")) return `${name} es un equipo orientado a estudio y productividad (${precio})${vendidos}.`;
-    return `${name} ofrece una propuesta equilibrada entre calidad y precio (${precio})${vendidos}.`;
-  }
-
-  async function getJSON(url){
-    const res = await fetch(url);
-    if(!res.ok) throw new Error(`HTTP ${res.status} en ${url}`);
-    return res.json();
-  }
-
-  function renderInfo(p){
-    $("#productName").textContent = p.name;
-    $("#productCategory").textContent = p.category || "";
-    $("#productSoldCount").textContent = `${p.soldCount} vendidos`;
-    $("#productCost").textContent = `${p.currency} ${p.cost}`;
-    $("#productCostBig").textContent = `${p.currency} ${p.cost}`;
-    $("#productCurrency").textContent = p.currency || "";
-
-    const desc = (p.description && p.description.trim())
-      ? p.description
-      : autoDescribe({ name: p.name, category: p.category, cost: p.cost, currency: p.currency, soldCount: p.soldCount });
-    $("#productDescription").textContent = desc;
-
-    // Galería
-    const main = $("#imageMain");
-    const thumbs = $("#thumbs");
-    thumbs.innerHTML = "";
-    if (p.images && p.images.length){
-      main.src = p.images[0];
-      p.images.forEach(src=>{
-        const img = document.createElement('img');
-        img.className = 'img-thumbnail';
-        img.style.cssText = 'width:90px;cursor:pointer';
-        img.alt = 'thumb';
-        img.src = src;
-        img.addEventListener('click', ()=> main.src = src);
-        thumbs.appendChild(img);
-      });
-    } else {
-      main.src = 'https://placehold.co/800x480?text=Sin+imagen';
-    }
-
-    // Relacionados
-    const rel = $("#relatedProducts");
-    rel.innerHTML = "";
-    (p.relatedProducts || []).forEach(r=>{
-      const col = document.createElement('div');
-      col.className = 'col-6 col-md-4 col-lg-3';
-      col.innerHTML = `
-        <div class="card h-100 shadow-sm" style="cursor:pointer">
-          <img class="card-img-top" src="${r.image}" alt="${r.name}">
-          <div class="card-body"><h5 class="card-title">${r.name}</h5></div>
-        </div>`;
-      col.querySelector('.card').addEventListener('click', ()=>{
-        localStorage.setItem('productID', r.id);
-        location.href = 'product-info.html';
-      });
-      rel.appendChild(col);
-    });
-  }
-
-  function renderComments(list){
-    const cont = $("#comments-container");
-    cont.innerHTML = "";
-    list.forEach(c=>{
-      const item = document.createElement('div');
-      item.className = 'list-group-item';
-      const stars = `<span class="text-warning">${"★".repeat(c.score)}</span><span class="text-muted">${"☆".repeat(5-c.score)}</span>`;
-      item.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center">
-          <strong>${c.user}</strong>
-          <small class="text-muted">${new Date(c.dateTime).toLocaleString()}</small>
-        </div>
-        <div>${stars}</div>
-        <p class="mb-0">${c.description}</p>`;
-      cont.appendChild(item);
-    });
-  }
-
-  async function run(){
-    const id = localStorage.getItem('productID');
-    if(!id){
-      showError('No hay productID en localStorage. Volviendo a la lista.');
-      location.href = 'products.html';
-      return;
-    }
-
-    // pinta el correo si existe (por si el otro script no cargó)
-    try{
-      const correo = sessionStorage.getItem('usuario') || localStorage.getItem('usuario') || '';
-      if (correo) document.getElementById('usuarioActual').textContent = correo;
-    }catch(_){}
-
-    const infoURL = `https://japceibal.github.io/emercado-api/products/${id}.json`;
-    const commURL = `https://japceibal.github.io/emercado-api/products_comments/${id}.json`;
-
-    try{
-      const [info, comments] = await Promise.all([ getJSON(infoURL), getJSON(commURL) ]);
-      renderInfo(info);
-      renderComments(comments || []);
-    }catch(err){
-      console.error(err);
-      showError('No se pudo cargar el producto. Revisa la Consola (F12) para más detalles.');
-    }
-  }
-
-  // Ejecuta solo si aún no hay nombre pintado (evita duplicar si el externo sí cargó)
-  if (!document.getElementById('productName')?.textContent || document.getElementById('productName').textContent === 'Producto') {
-    run();
-  }
-})();
-</script>
+  <script src="js/product-info.js"></script>
 </body>
 </html>

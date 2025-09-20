@@ -281,7 +281,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   wireUI();
 
   try {
-    // ⬇️ IMPORTANTE: manejar el envoltorio {status, data}
     const res = await getJSONData(PRODUCTS_URL);
     if (res.status !== "ok") throw new Error(res.data?.message || "Error HTTP");
 
