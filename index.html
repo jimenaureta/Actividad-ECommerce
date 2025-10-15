@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,9 +23,16 @@
           <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
           <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
+
+          <!-- AGREGADO: enlace a Mi perfil -->
+          <li class="nav-item"><a class="nav-link" href="my-profile.html">Mi perfil</a></li>
+
           <li class="nav-item d-flex align-items-center gap-2">
             <span id="usuarioActual" class="user-badge"></span>
             <button id="btnSalir" class="btn btn-outline-light btn-sm" type="button">Salir</button>
+
+            <!-- AGREGADO: botón modo claro/oscuro -->
+            <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
           </li>
         </ul>
       </div>
@@ -78,6 +85,10 @@
   </footer>
 
   <script src="js/bootstrap.bundle.min.js"></script>
+
+  <!-- tema (persistencia claro/oscuro) -->
+  <script src="js/theme.js"></script>
+
   <!-- Bootstrap de sesión + navbar centralizado -->
   <script type="module" src="js/init.js"></script>
   <!-- Tu lógica propia de index si la tienes -->

@@ -579,3 +579,99 @@ body.login-page #spinner-wrapper .lds-ring{
 #thumbs img { transition: transform .1s ease; }
 #thumbs img:hover { transform: scale(1.05); }
 #comments-container .list-group-item { border-radius: 10px; }
+
+/* =========================
+   TEMA CLARO/OSCURO (SCOPED)
+   Se aplica SOLO cuando la página tiene data-theme en <html>
+   ========================= */
+
+/* Variables del tema: existen únicamente si hay [data-theme] */
+:root[data-theme]{
+  --bg:#ffffff;
+  --fg:#111111;
+
+  --card-bg:#ffffff;
+  --card-fg:#111111;
+
+  --muted:#6b7280;
+  --navbar-bg:#212529;
+  --album-bg:#f8f9fa;
+
+  /* Tokens útiles para componentes Bootstrap en light */
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--fg);
+  --bs-card-bg: var(--card-bg);
+  --bs-card-color: var(--card-fg);
+  --bs-border-color: #dee2e6;
+  --bs-secondary-color: var(--muted);
+}
+
+/* Variante dark */
+:root[data-theme="dark"]{
+  --bg:#111214;
+  --fg:#e5e7eb;
+
+  --card-bg:#1b1d20;
+  --card-fg:#e5e7eb;
+
+  --muted:#9ca3af;
+  --navbar-bg:#0f1113;
+  --album-bg:#15171a;
+
+  /* Tokens Bootstrap en dark */
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--fg);
+  --bs-card-bg: var(--card-bg);
+  --bs-card-color: var(--card-fg);
+  --bs-border-color: #2a2d31;
+  --bs-secondary-color: var(--muted);
+}
+
+/* Aplicación del tema (SOLO si la página tiene data-theme) */
+html[data-theme],
+body[data-theme]{
+  background: var(--bg) !important;
+  color: var(--fg) !important;
+}
+
+[data-theme] .navbar.bg-dark{ background-color: var(--navbar-bg) !important; }
+[data-theme] .album{ background: var(--album-bg) !important; }
+[data-theme] .album.bg-light{ background: var(--album-bg) !important; }
+
+[data-theme] .card{ background: var(--card-bg) !important; color: var(--card-fg) !important; }
+[data-theme] .list-group-item{ background: var(--card-bg) !important; color: var(--card-fg) !important; border-color: var(--bs-border-color) !important; }
+[data-theme] .text-muted, .login-muted, .card .text-body-secondary{ color: var(--muted) !important; }
+
+[data-theme] .navbar .btn.btn-outline-light{ border-color:#d1d5db !important; color:#fff !important; }
+[data-theme] .navbar .btn.btn-outline-light:hover{ filter:brightness(.95); }
+
+[data-theme] .col .card{ background: var(--card-bg) !important; }
+[data-theme] .col .card-body{ background: var(--card-bg) !important; color: var(--card-fg) !important; }
+
+/* =========================
+   LOGIN SAFEGUARD
+   El tema NO afecta al login (no usa data-theme).
+   Aquí dejas el look de tu login como antes.
+   ========================= */
+
+body.login-page{
+  /* si tenías un fondo propio, puedes dejarlo aquí;
+     ejemplo con gradiente cálido tipo captura: */
+  background:
+    radial-gradient(1200px 800px at 70% 20%, #915300 0%, #6b3a00 45%, #2a2d00 100%) !important;
+  color:#111 !important;
+}
+
+body.login-page .login-card{ background:#ffffff !important; color:#111 !important; }
+body.login-page .login-muted{ color:#6b7280 !important; }
+
+/* Previsualización de foto de perfil */
+#avatarPreview {
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
+  border-radius: .5rem;
+}
+:root[data-theme="dark"] #avatarPreview{
+  border-color: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+}

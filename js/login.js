@@ -1,4 +1,3 @@
-// js/login.js
 import { iniciarSesion, redirigirSiLogueado } from "./common.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,8 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const email = document.getElementById("usuario").value.trim();
     const pass  = document.getElementById("password").value.trim();
-    if (!email || !pass) { alert("Complete Email y Contraseña."); return; }
+
+    if (!email || !pass) {
+      alert("Complete Email y Contraseña.");
+      return;
+    }
+
+    // Inicia sesión con la función ya existente
     iniciarSesion(email);
+
+    // Guardar el correo para que lo usen el navbar y los comentarios
+    localStorage.setItem("email", email);
+
+    // Redirigir al inicio
     location.href = "./index.html";
   });
 });

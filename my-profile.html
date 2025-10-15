@@ -1,73 +1,181 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es" data-theme="light">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>eMercado - Todo lo que busques está aquí</title>
-  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/styles.css" rel="stylesheet">
-  <style>
-    .bd-placeholder-img {
-      font-size: 1.125rem;
-      text-anchor: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi perfil</title>
 
-    @media (min-width: 768px) {
-      .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-      }
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
+  <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
     <div class="container">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="index.html">eMercado</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Abrir menú">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav w-100 justify-content-between">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="categories.html">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell.html">Vender</a>
-          </li>
-          <li class="nav-item">
-          </li>
+
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
+          <!-- AGREGADO: enlace a Mi perfil -->
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="my-profile.html">Mi perfil</a></li>
         </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <span id="usuarioActual" class="badge bg-secondary"></span>
+          <button id="btnSalir" class="btn btn-outline-light btn-sm" type="button">Salir</button>
+          <!-- AGREGADO: botón modo claro/oscuro -->
+          <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
+        </div>
       </div>
     </div>
   </nav>
-  <main>
-    <div class="container">
-      <div class="alert alert-danger text-center" role="alert">
-        <h4 class="alert-heading">Funcionalidad en desarrollo</h4>
-      </div>
-    </div>
-  </main>
-  <footer class="text-muted">
-    <div class="container">
-      <p class="float-end">
-        <a href="#">Volver arriba</a>
-      </p>
-      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
-    </div>
-  </footer>
-  <script src="js/bootstrap.bundle.min.js"></script>
-  <script src="js/init.js"></script>
-  <script src="js/my-profile.js"></script>
-</body>
 
+  <!-- CONTENIDO -->
+  <main class="container my-4">
+    <h2 class="mb-3">Mi perfil</h2>
+
+    <form id="profileForm" novalidate>
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Nombre</label>
+          <input id="firstName" class="form-control" type="text" required>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Segundo nombre</label>
+          <input id="secondName" class="form-control" type="text">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Apellido</label>
+          <input id="surname" class="form-control" type="text" required>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Segundo apellido</label>
+          <input id="secondSurname" class="form-control" type="text">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Email</label>
+          <input id="email" class="form-control" type="email" required readonly>
+          <div class="form-text">Se precarga la primera vez desde tu sesión.</div>
+          <div class="invalid-feedback">Este campo es obligatorio.</div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Teléfono</label>
+          <input id="phone" class="form-control" type="tel">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Calle</label>
+          <input id="street" class="form-control" type="text">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Número</label>
+          <input id="number" class="form-control" type="text">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Esquina</label>
+          <input id="corner" class="form-control" type="text">
+        </div>
+
+<div class="col-12 col-md-6">
+  <label class="form-label d-block">Foto de perfil</label>
+
+  <!-- PREVIEW -->
+  <img id="avatarPreview"
+       alt="Previsualización"
+       style="
+         display:none;
+         width:140px; height:140px;
+         object-fit:cover; border-radius:12px;
+         border:1px solid rgba(0,0,0,.15);
+       ">
+
+  <!-- FILE INPUT -->
+  <input id="avatar" class="form-control mt-2 mb-1" type="file" accept="image/*">
+
+  <div class="form-text">La imagen persiste en localStorage (base64). Podés quitarla.</div>
+</div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+        <button class="btn btn-outline-secondary" type="button" id="btnClearPhoto">Quitar foto</button>
+      </div>
+    </form>
+
+    <div class="alert alert-success mt-3 d-none" id="saveOk">Perfil guardado.</div>
+  </main>
+
+  <footer class="text-center py-4 text-muted">
+    <small>© 2025 - Mi Sitio</small>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="my-profile.js"></script>
+  <script>
+/* Preview + persistencia de foto (independiente de otros JS) */
+document.addEventListener("DOMContentLoaded", function () {
+  const KEY = "perfil_foto";                 // dónde guardo la imagen
+  const img = document.getElementById("avatarPreview");
+  const file = document.getElementById("avatar");
+  const clearBtn = document.getElementById("btnClearPhoto"); // si existe
+
+  function show(src) {
+    if (src) {
+      img.src = src;
+      img.style.display = "block";
+    } else {
+      img.removeAttribute("src");
+      img.style.display = "none";
+    }
+  }
+
+  // Cargar lo que esté guardado
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (saved) show(saved); else show("");
+  } catch { show(""); }
+
+  // Evitar ícono roto si fallara el src
+  img.addEventListener("error", () => show(""));
+
+  // Cuando el usuario selecciona archivo
+  if (file) {
+    file.addEventListener("change", function (e) {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const b64 = String(reader.result || "");
+        try { localStorage.setItem(KEY, b64); } catch {}
+        show(b64);
+      };
+      reader.readAsDataURL(f);
+    });
+  }
+
+  // Botón "Quitar foto" (si existe en tu formulario)
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function () {
+      try { localStorage.removeItem(KEY); } catch {}
+      if (file) file.value = "";
+      show("");
+    });
+  }
+});
+</script>
+</body>
 </html>

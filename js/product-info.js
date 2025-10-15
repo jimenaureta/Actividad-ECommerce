@@ -186,7 +186,7 @@ function mergeReviews(apiList, localList) {
 }
 
 async function main() {
-  // Email visible en navbar lo maneja init.js/common.js (ya en tu proyecto)
+  // Email visible en navbar lo maneja init.js/common.js
   const productID = localStorage.getItem('productID') || 50924; // fallback por si falta
 
   // Carga de producto y comentarios del API

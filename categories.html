@@ -22,10 +22,17 @@
           <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
           <li class="nav-item"><a class="nav-link active" href="categories.html">Categorías</a></li>
           <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
+
+          <!-- AGREGADO: enlace a Mi perfil -->
+          <li class="nav-item"><a class="nav-link" href="my-profile.html">Mi perfil</a></li>
         </ul>
+
         <div class="d-flex align-items-center gap-2">
           <span id="usuarioActual" class="badge bg-secondary"></span>
           <button id="btnSalir" class="btn btn-outline-light btn-sm" type="button">Salir</button>
+
+          <!-- AGREGADO: botón modo claro/oscuro -->
+          <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
         </div>
       </div>
     </div>
@@ -84,5 +91,6 @@
   <!-- IMPORTANTE: ambos como módulos -->
   <script type="module" src="js/init.js"></script>
   <script type="module" src="js/categories.js"></script>
+  <script src="js/theme.js"></script>
 </body>
 </html>
