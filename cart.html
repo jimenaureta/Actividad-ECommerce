@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es" data-theme="light">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -30,18 +29,46 @@
             <a class="nav-link" href="sell.html">Vender</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link active" href="cart.html">Mi carrito
+              <span id="cartCountBadge" class="badge text-bg-primary align-text-top ms-1 d-none"
+                    title="Cantidad total de productos"></span>
+            </a>
           </li>
         </ul>
+
+        <!-- 🔆 Botón modo claro/oscuro -->
+        <div class="d-flex align-items-center">
+          <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
+        </div>
       </div>
     </div>
   </nav>
+
   <main>
     <div class="container">
       <div class="alert alert-danger text-center" role="alert">
         <h4 class="alert-heading">Funcionalidad en desarrollo</h4>
       </div>
+
+      <!-- Carrito -->
+      <section id="emptyCart" class="alert alert-info d-none mt-3" role="status">
+        No hay productos cargados en el carrito.
+      </section>
+
+      <section id="cartList" class="vstack gap-3 mt-3"></section>
+
+      <aside id="cartTotals" class="mt-4 d-none">
+        <div class="card">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <strong>Total:</strong>
+            <span id="grandTotal" class="fs-5">—</span>
+          </div>
+        </div>
+      </aside>
+      <!-- /Carrito -->
     </div>
   </main>
+
   <footer class="text-muted">
     <div class="container">
       <p class="float-end">
@@ -58,9 +85,13 @@
       <div></div>
     </div>
   </div>
+
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/init.js"></script>
+  <script src="js/cart-badge.js"></script>
   <script src="js/cart.js"></script>
-</body>
 
+  <!-- 🌙 Script del modo claro/oscuro persistente -->
+  <script src="js/theme.js"></script>
+</body>
 </html>

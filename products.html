@@ -29,6 +29,14 @@
 
             <!-- AGREGADO: enlace a Mi perfil -->
             <li class="nav-item"><a class="nav-link" href="my-profile.html">Mi perfil</a></li>
+
+            <!-- AGREGADO: enlace a Mi carrito con badge -->
+            <li class="nav-item">
+              <a class="nav-link" href="cart.html">Mi carrito
+                <span id="cartCountBadge" class="badge text-bg-primary align-text-top ms-1 d-none"
+                      title="Cantidad total de productos"></span>
+              </a>
+            </li>
           </ul>
 
           <div class="d-flex align-items-center gap-2">
@@ -107,6 +115,10 @@
   <script type="module" src="js/init.js"></script>
   <!-- Lógica de productos (ya sin manejo de sesión) -->
   <script type="module" src="js/products.js"></script>
+
+  <!-- AGREGADO: badge del carrito (no módulo, funciona en todas las páginas) -->
+  <script src="js/cart-badge.js"></script>
+
   <script src="js/theme.js"></script>
 </body>
 </html>

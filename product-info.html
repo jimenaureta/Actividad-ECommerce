@@ -30,6 +30,14 @@
 
             <!-- AGREGADO: enlace a Mi perfil -->
             <li class="nav-item"><a class="nav-link" href="my-profile.html">Mi perfil</a></li>
+
+            <!-- AGREGADO: enlace a Mi carrito con badge -->
+            <li class="nav-item">
+              <a class="nav-link" href="cart.html">Mi carrito
+                <span id="cartCountBadge" class="badge text-bg-primary align-text-top ms-1 d-none"
+                      title="Cantidad total de productos"></span>
+              </a>
+            </li>
           </ul>
 
           <!-- Usuario + botón tema -->
@@ -83,6 +91,17 @@
               <dt class="col-4">Moneda</dt>
               <dd class="col-8 mb-2"><span id="productCurrency">USD</span></dd>
             </dl>
+
+            <!-- AGREGADO: Comprar -->
+            <hr>
+            <div class="d-flex align-items-center gap-2">
+              <label for="buyQty" class="form-label m-0">Cantidad</label>
+              <input id="buyQty" type="number" class="form-control" value="1" min="1" style="width: 6.5rem;">
+              <button id="buyBtn" class="btn btn-success">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Comprar
+              </button>
+            </div>
+            <!-- /AGREGADO: Comprar -->
           </div>
         </div>
       </div>
@@ -140,6 +159,81 @@
   <script src="js/common.js"></script>
   <script src="js/init.js"></script>
   <script src="js/product-info.js"></script>
+
+  <!-- AGREGADO: badge del carrito (no módulo) -->
+  <script src="js/cart-badge.js"></script>
+
+  <!-- AGREGADO: lógica de compra (sin tocar product-info.js) -->
+  <script>
+    (function () {
+      // Helpers del carrito (same key que en cart-badge.js)
+      var CART_KEY = "cartItems";
+      function readCart() {
+        try {
+          var raw = localStorage.getItem(CART_KEY);
+          var arr = raw ? JSON.parse(raw) : [];
+          return Array.isArray(arr) ? arr : [];
+        } catch (e) { return []; }
+      }
+      function writeCart(items) {
+        localStorage.setItem(CART_KEY, JSON.stringify(items || []));
+        // Notificar a quien escuche (badge, otras páginas)
+        window.dispatchEvent(new CustomEvent("cart:updated"));
+      }
+
+      function getText(el) { return (el && el.textContent || "").trim(); }
+      function parseCost(text) {
+        // Acepta "USD 120" o "120" -> devuelve número
+        var m = (text || "").match(/([\d.,]+)/);
+        return m ? Number(m[1].replace(/\./g, "").replace(",", ".")) : 0;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var btn = document.getElementById("buyBtn");
+        var qtyInput = document.getElementById("buyQty");
+        if (!btn || !qtyInput) return;
+
+        btn.addEventListener("click", function () {
+          var qty = Math.max(1, parseInt(qtyInput.value || "1", 10));
+
+          // Tomar datos desde el DOM existente (sin depender del JS interno)
+          var name = getText(document.getElementById("productName")) || "Producto";
+          var currency = getText(document.getElementById("productCurrency")) || "USD";
+          // Preferimos el costo "grande" si tiene número
+          var costBigTxt = getText(document.getElementById("productCostBig"));
+          var costTxt = getText(document.getElementById("productCost"));
+          var cost = parseCost(costBigTxt) || parseCost(costTxt) || 0;
+          var image = (document.getElementById("imageMain") && document.getElementById("imageMain").src) || "";
+
+          var item = {
+            // Si no tenemos id desde el DOM, trabajamos con nombre/moneda
+            name: name,
+            cost: Number(cost),
+            currency: currency,
+            image: image,
+            quantity: qty
+          };
+
+          var items = readCart();
+          // Buscar si ya existe por nombre + moneda
+          var idx = items.findIndex(function (x) {
+            return String(x.name) === String(item.name) && String(x.currency) === String(item.currency);
+          });
+
+          if (idx >= 0) {
+            items[idx].quantity = Number(items[idx].quantity || 0) + qty;
+          } else {
+            items.push(item);
+          }
+          writeCart(items);
+
+          // Navegar al carrito
+          window.location.href = "cart.html";
+        });
+      });
+    })();
+  </script>
+
   <!-- tema (persistencia claro/oscuro) -->
   <script src="js/theme.js"></script>
 </body>
