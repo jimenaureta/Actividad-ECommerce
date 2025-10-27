@@ -651,11 +651,11 @@ body[data-theme]{
 /* =========================
    LOGIN SAFEGUARD
    El tema NO afecta al login (no usa data-theme).
-   Aquí dejas el look de tu login como antes.
+   Aquí deja el look de tu login como antes.
    ========================= */
 
 body.login-page{
-  /* si tenías un fondo propio, puedes dejarlo aquí;
+  /* si tenía un fondo propio, lo deja aquí;
      ejemplo con gradiente cálido tipo captura: */
   background:
     radial-gradient(1200px 800px at 70% 20%, #915300 0%, #6b3a00 45%, #2a2d00 100%) !important;
@@ -674,4 +674,104 @@ body.login-page .login-muted{ color:#6b7280 !important; }
 :root[data-theme="dark"] #avatarPreview{
   border-color: rgba(255,255,255,.12);
   background: rgba(255,255,255,.04);
+}
+
+/* HERO MODO OSCURO */
+html[data-theme="dark"] .jumbotron {
+  background: #000 url("../img/cover_back_black.png") center/cover no-repeat !important;
+  color: #fff !important;
+  padding: 5rem 0 4rem !important;
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-theme="dark"] footer,
+html[data-theme="dark"] .footer,
+html[data-theme="dark"] #footer,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] body > div:last-of-type {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .jumbotron,
+html[data-theme="dark"] .alert-light,
+html[data-theme="dark"] .bg-light {
+  background-color: #1a1a1a !important;
+  color: #ffb74d !important; /* tono naranja cálido */
+  border: none !important;
+}
+
+html[data-theme="dark"] .jumbotron h2,
+html[data-theme="dark"] .jumbotron h3,
+html[data-theme="dark"] .jumbotron p {
+  color: #ffb74d !important;
+}
+html[data-theme="dark"] div,
+html[data-theme="dark"] section,
+html[data-theme="dark"] .container,
+html[data-theme="dark"] .alert,
+html[data-theme="dark"] .jumbotron {
+  background-color: #121212 !important;
+  color: #ffb74d !important;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] p {
+  color: #ffb74d !important;
+}
+
+/* Para asegurar contraste uniforme */
+html[data-theme="dark"] body {
+  background-color: #0d0d0d !important;
+}
+
+html[data-theme="dark"] a.btn.btn-light,
+html[data-theme="dark"] .btn.btn-light,
+html[data-theme="dark"] .btn-light {
+  background-color: #1a1a1a !important;
+  color: #ffb74d !important;       /* texto amarillo cálido */
+  border-color: #2a2a2a !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .btn.btn-light:hover,
+html[data-theme="dark"] .btn-light:hover {
+  background-color: #232323 !important;
+  color: #ffffff !important;
+  border-color: #3a3a3a !important;
+}
+
+html[data-theme="dark"] .btn.btn-light:focus,
+html[data-theme="dark"] .btn.btn-light:active {
+  outline: none !important;
+  box-shadow: 0 0 0 .2rem rgba(255, 215, 0, .15) !important; /* halo sutil */
+}
+html[data-theme="dark"] input.form-control,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input[type="number"],
+html[data-theme="dark"] .input-group-text {
+  background-color: #1a1a1a !important; /* fondo uniforme oscuro */
+  color: #ffb74d !important;            /* texto amarillo cálido */
+  border-color: #333 !important;
+}
+
+html[data-theme="dark"] .input-group-text {
+  background-color: #121212 !important; /* borde izquierdo más oscuro */
+  color: #bbbbbb !important;            /* placeholder claro */
+}
+
+html[data-theme="dark"] input::placeholder {
+  color: #777 !important;
+}
+
+html[data-theme="dark"] input:focus {
+  background-color: #1f1f1f !important;
+  color: #fff !important;
+  border-color: #ffb74d !important;
+  box-shadow: 0 0 0 0.15rem rgba(255, 183, 77, 0.25) !important;
 }

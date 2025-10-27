@@ -28,10 +28,10 @@
             <li class="nav-item"><a class="nav-link" href="products.html">Productos</a></li>
             <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Detalle</a></li>
 
-            <!-- AGREGADO: enlace a Mi perfil -->
+            <!-- Enlace a Mi perfil -->
             <li class="nav-item"><a class="nav-link" href="my-profile.html">Mi perfil</a></li>
 
-            <!-- AGREGADO: enlace a Mi carrito con badge -->
+            <!-- Enlace a Mi carrito con badge -->
             <li class="nav-item">
               <a class="nav-link" href="cart.html">Mi carrito
                 <span id="cartCountBadge" class="badge text-bg-primary align-text-top ms-1 d-none"
@@ -46,7 +46,7 @@
               <i class="fa fa-user-circle-o me-1" aria-hidden="true"></i>
               <span id="usuarioActual" class="badge bg-secondary" aria-live="polite"></span>
             </span>
-            <!-- AGREGADO: botón modo claro/oscuro -->
+            <!-- Botón modo claro/oscuro -->
             <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
           </div>
         </div>
@@ -92,7 +92,7 @@
               <dd class="col-8 mb-2"><span id="productCurrency">USD</span></dd>
             </dl>
 
-            <!-- AGREGADO: Comprar -->
+            <!-- Comprar -->
             <hr>
             <div class="d-flex align-items-center gap-2">
               <label for="buyQty" class="form-label m-0">Cantidad</label>
@@ -101,7 +101,7 @@
                 <i class="fa fa-shopping-cart" aria-hidden="true"></i> Comprar
               </button>
             </div>
-            <!-- /AGREGADO: Comprar -->
+            <!-- Comprar -->
           </div>
         </div>
       </div>
@@ -160,10 +160,10 @@
   <script src="js/init.js"></script>
   <script src="js/product-info.js"></script>
 
-  <!-- AGREGADO: badge del carrito (no módulo) -->
+  <!-- Badge del carrito (no módulo) -->
   <script src="js/cart-badge.js"></script>
 
-  <!-- AGREGADO: lógica de compra (sin tocar product-info.js) -->
+  <!-- Lógica de compra (sin tocar product-info.js) -->
   <script>
     (function () {
       // Helpers del carrito (same key que en cart-badge.js)
