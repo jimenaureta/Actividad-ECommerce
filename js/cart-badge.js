@@ -1,5 +1,3 @@
-// js/cart-badge.js 
-// Utilidades de carrito + actualización de badge en navbar.
 (function () {
   const CART_KEY = "cartItems";
   function readCart() {

@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>eMercado - Todo lo que busques está aquí</title>
-  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/styles.css" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>eMercado - Carrito</title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
     <div class="container">
+      <a class="navbar-brand" href="index.html">eMercado</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav w-100 justify-content-between">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="categories.html">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell.html">Vender</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="categories.html">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="sell.html">Vender</a></li>
           <li class="nav-item">
             <a class="nav-link active" href="cart.html">Mi carrito
               <span id="cartCountBadge" class="badge text-bg-primary align-text-top ms-1 d-none"
@@ -36,7 +32,6 @@
           </li>
         </ul>
 
-        <!-- 🔆 Botón modo claro/oscuro -->
         <div class="d-flex align-items-center">
           <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button" aria-label="Cambiar tema">🌙 Oscuro</button>
         </div>
@@ -44,45 +39,185 @@
     </div>
   </nav>
 
-  <main>
-    <div class="container">
-      <div class="alert alert-danger text-center" role="alert">
-        <h4 class="alert-heading">Funcionalidad en desarrollo</h4>
-      </div>
+  <main class="container my-4" id="contenido">
+    <!-- LISTA DE PRODUCTOS -->
+    <section class="mb-4">
+      <h1 class="h4 mb-3">Carrito</h1>
+      <div id="emptyCart" class="alert alert-info d-none" role="status">No hay productos cargados en el carrito.</div>
+      <div id="cartList" class="vstack gap-3"></div>
+    </section>
 
-      <!-- Carrito -->
-      <section id="emptyCart" class="alert alert-info d-none mt-3" role="status">
-        No hay productos cargados en el carrito.
-      </section>
+    <!-- PROCESO DE COMPRA (tabs) -->
+    <section class="mb-4">
+      <ul class="nav nav-tabs" id="checkoutTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="envio-tab" data-bs-toggle="tab" data-bs-target="#envio" type="button" role="tab">Tipo de envío</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="direccion-tab" data-bs-toggle="tab" data-bs-target="#direccion" type="button" role="tab">Dirección de envío</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="pago-tab" data-bs-toggle="tab" data-bs-target="#pago" type="button" role="tab">Forma de pago</button>
+        </li>
+        <li class="nav-item ms-auto" role="presentation">
+          <button class="nav-link" id="costos-tab" data-bs-toggle="tab" data-bs-target="#costos" type="button" role="tab">Costos</button>
+        </li>
+      </ul>
 
-      <section id="cartList" class="vstack gap-3 mt-3"></section>
+      <div class="tab-content border border-top-0 p-3 rounded-bottom" id="checkoutTabsContent">
+        <!-- Envío -->
+        <div class="tab-pane fade show active" id="envio" role="tabpanel" aria-labelledby="envio-tab">
+          <fieldset>
+            <legend class="h6">Selecciona un tipo de envío</legend>
+            <div class="form-check">
+              <input class="form-check-input shipping-option" type="radio" name="shipping" id="shipPremium" data-percent="0.15">
+              <label class="form-check-label" for="shipPremium">Premium 2 a 5 días (15%)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input shipping-option" type="radio" name="shipping" id="shipExpress" data-percent="0.07">
+              <label class="form-check-label" for="shipExpress">Express 5 a 8 días (7%)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input shipping-option" type="radio" name="shipping" id="shipStandard" data-percent="0.05">
+              <label class="form-check-label" for="shipStandard">Standard 12 a 15 días (5%)</label>
+            </div>
+            <div class="form-text">El costo de envío se calcula como porcentaje del subtotal.</div>
+          </fieldset>
+        </div>
 
-      <aside id="cartTotals" class="mt-4 d-none">
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <strong>Total:</strong>
-            <span id="grandTotal" class="fs-5">—</span>
+        <!-- Dirección -->
+        <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
+          <form id="addressForm" class="row g-3" novalidate>
+            <div class="col-md-4">
+              <label for="addrDepto" class="form-label">Departamento</label>
+              <input type="text" id="addrDepto" class="form-control" required>
+              <div class="invalid-feedback">Ingresa el departamento.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="addrLocalidad" class="form-label">Localidad</label>
+              <input type="text" id="addrLocalidad" class="form-control" required>
+              <div class="invalid-feedback">Ingresa la localidad.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="addrCalle" class="form-label">Calle</label>
+              <input type="text" id="addrCalle" class="form-control" required>
+              <div class="invalid-feedback">Ingresa la calle.</div>
+            </div>
+            <div class="col-md-2">
+              <label for="addrNumero" class="form-label">Número</label>
+              <input type="text" id="addrNumero" class="form-control" required inputmode="numeric">
+              <div class="invalid-feedback">Ingresa el número.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="addrEsquina" class="form-label">Esquina</label>
+              <input type="text" id="addrEsquina" class="form-control" required>
+              <div class="invalid-feedback">Ingresa la esquina.</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Pago -->
+        <div class="tab-pane fade" id="pago" role="tabpanel" aria-labelledby="pago-tab">
+          <fieldset class="mb-3">
+            <legend class="h6">Selecciona una forma de pago</legend>
+            <div class="form-check">
+              <input class="form-check-input pay-option" type="radio" name="payment" id="payCard" value="card">
+              <label class="form-check-label" for="payCard">Tarjeta de crédito</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input pay-option" type="radio" name="payment" id="payBank" value="bank">
+              <label class="form-check-label" for="payBank">Transferencia bancaria</label>
+            </div>
+          </fieldset>
+
+          <!-- Card form -->
+          <form id="cardForm" class="row g-3 d-none" novalidate>
+            <div class="col-md-6">
+              <label for="cardNumber" class="form-label">Número de tarjeta</label>
+              <input type="text" id="cardNumber" class="form-control" maxlength="19" inputmode="numeric">
+              <div class="invalid-feedback">Ingresa un número válido.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="cardName" class="form-label">Nombre en la tarjeta</label>
+              <input type="text" id="cardName" class="form-control">
+              <div class="invalid-feedback">Ingresa el nombre del titular.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="cardExpiry" class="form-label">Vencimiento (MM/AA)</label>
+              <input type="text" id="cardExpiry" class="form-control" placeholder="MM/AA" inputmode="numeric">
+              <div class="invalid-feedback">Ingresa un vencimiento válido.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="cardCVV" class="form-label">CVV</label>
+              <input type="password" id="cardCVV" class="form-control" maxlength="4" inputmode="numeric">
+              <div class="invalid-feedback">Ingresa el CVV.</div>
+            </div>
+          </form>
+
+          <!-- Bank form -->
+          <form id="bankForm" class="row g-3 d-none" novalidate>
+            <div class="col-md-6">
+              <label for="bankName" class="form-label">Banco</label>
+              <input type="text" id="bankName" class="form-control">
+              <div class="invalid-feedback">Ingresa el banco.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="bankAccount" class="form-label">Cuenta</label>
+              <input type="text" id="bankAccount" class="form-control" inputmode="numeric">
+              <div class="invalid-feedback">Ingresa la cuenta.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="bankOwner" class="form-label">Titular</label>
+              <input type="text" id="bankOwner" class="form-control">
+              <div class="invalid-feedback">Ingresa el titular.</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Costos -->
+        <div class="tab-pane fade" id="costos" role="tabpanel" aria-labelledby="costos-tab">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal</span>
+                <strong id="subtotalText">—</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Envío</span>
+                <strong id="shippingText">—</strong>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Total</span>
+                <strong id="totalText" class="fs-5">—</strong>
+              </div>
+            </div>
           </div>
         </div>
-      </aside>
-      <!-- /Carrito -->
-    </div>
+      </div>
+    </section>
+
+    <!-- ACCIONES -->
+    <section class="d-flex gap-2 justify-content-end">
+      <button id="checkoutBtn" class="btn btn-success">
+        <i class="fa fa-check" aria-hidden="true"></i> Finalizar compra
+      </button>
+    </section>
+
+    <!-- FEEDBACK -->
+    <div id="feedback" class="alert d-none mt-3" role="alert"></div>
   </main>
 
-  <footer class="text-muted">
+  <footer class="text-muted py-3 border-top">
     <div class="container">
-      <p class="float-end">
-        <a href="#">Volver arriba</a>
-      </p>
-      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+      <p class="float-end"><a href="#contenido">Volver arriba</a></p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank" rel="noopener">Jóvenes a Programar</a></p>
     </div>
   </footer>
-  <div id="spinner-wrapper">
-    <div class="lds-ring">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+
+  <div id="spinner-wrapper" class="position-fixed top-0 start-0 w-100 h-100 d-none" role="status" aria-live="polite" aria-label="Cargando">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <div class="spinner-border" role="status" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -90,8 +225,6 @@
   <script src="js/init.js"></script>
   <script src="js/cart-badge.js"></script>
   <script src="js/cart.js"></script>
-
-  <!-- 🌙 Script del modo claro/oscuro persistente -->
   <script src="js/theme.js"></script>
 </body>
 </html>

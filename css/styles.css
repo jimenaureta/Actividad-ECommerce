@@ -648,12 +648,6 @@ body[data-theme]{
 [data-theme] .col .card{ background: var(--card-bg) !important; }
 [data-theme] .col .card-body{ background: var(--card-bg) !important; color: var(--card-fg) !important; }
 
-/* =========================
-   LOGIN SAFEGUARD
-   El tema NO afecta al login (no usa data-theme).
-   Aquí deja el look de tu login como antes.
-   ========================= */
-
 body.login-page{
   /* si tenía un fondo propio, lo deja aquí;
      ejemplo con gradiente cálido tipo captura: */

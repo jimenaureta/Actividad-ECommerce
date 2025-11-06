@@ -11,7 +11,7 @@
     const btn = document.getElementById("themeToggle");
     if (btn) btn.innerText = next === "dark" ? "☀️ Claro" : "🌙 Oscuro";
 
-    /* 🌙 NUEVO: cambiar imagen del hero según tema */
+    /* Cambiar imagen del hero según tema */
     const hero = document.querySelector(".jumbotron");
     if (hero) {
       hero.style.backgroundImage =

@@ -13,7 +13,7 @@
   const clearPhoto = () => localStorage.removeItem(K_PROFILE_PHOTO);
 
   async function fileToBase64(file){
-    // Opcional: limitar tamaño (p.ej. 2MB)
+    // Limitar tamaño (p.ej. 2MB)
     const MAX = 2 * 1024 * 1024;
     if (file.size > MAX){
       if (!confirm("La imagen supera 2MB. ¿Guardar de todos modos?")) throw new Error("too_big");
