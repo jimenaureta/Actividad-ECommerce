@@ -310,3 +310,85 @@
     } catch { return String(Math.random()).slice(2); }
   }
 })();
+
+(function () {
+  // Helper para crear y mostrar un toast Bootstrap
+  function showToast(message, type = "info", delay = 3000) {
+    const container = document.getElementById("toastContainer");
+    if (!container) return;
+
+    const bg =
+      type === "success" ? "bg-success" :
+      type === "danger"  ? "bg-danger"  :
+      type === "warning" ? "bg-warning text-dark" : "bg-info";
+
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white ${bg} border-0 shadow`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    `;
+    container.appendChild(toast);
+
+    try {
+      // Si está Bootstrap, usamos su API
+      const bsToast = new bootstrap.Toast(toast, { delay, autohide: true });
+      toast.addEventListener("hidden.bs.toast", () => toast.remove());
+      bsToast.show();
+    } catch {
+      // Fallback simple si no está Bootstrap JS
+      toast.style.opacity = "0.95";
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = "opacity .3s";
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, delay);
+    }
+  }
+
+  // Observa el #feedback existente sin modificar su lógica original.
+  document.addEventListener("DOMContentLoaded", function () {
+    const fb = document.getElementById("feedback");
+    if (!fb) return;
+
+    const pickType = () => {
+      const txt = (fb.textContent || "").trim();
+      const cls = fb.className || "";
+      if (cls.includes("alert-danger")) return "danger";
+      if (cls.includes("alert-success")) return "success";
+      if (/revisa/i.test(txt)) return "danger";
+      if (/éxito|exitos/i.test(txt)) return "success";
+      return "info";
+    };
+
+    const handleChange = () => {
+      const msg = (fb.textContent || "").trim();
+      if (!msg) return;
+      // Muestra toast emergente y oculta el feedback estático
+      showToast(msg, pickType(), 3000);
+      // No tocamos la línea original que lo setea; solo lo ocultamos luego.
+      setTimeout(() => {
+        fb.classList.add("d-none");
+        fb.textContent = "";
+      }, 0);
+    };
+
+    const obs = new MutationObserver(handleChange);
+    obs.observe(fb, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+
+    // Si ya vino con contenido desde el render inicial
+    handleChange();
+  });
+})();
