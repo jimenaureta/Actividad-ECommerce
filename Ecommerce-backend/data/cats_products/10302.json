@@ -1,0 +1,11 @@
+{
+  "id": 10302,
+  "name": "Mesa grande comedor",
+  "description": "Mesa para comedor de seis personas.",
+  "currency": "USD",
+  "cost": 450,
+  "soldCount": 7,
+  "images": [
+    "img/prod103_2.jpg"
+  ]
+}

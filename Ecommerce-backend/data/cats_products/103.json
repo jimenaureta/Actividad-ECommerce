@@ -1,0 +1,42 @@
+{
+  "catID": 103,
+  "catName": "Muebles",
+  "products": [
+    {
+      "id": 10301,
+      "name": "Silla de madera",
+      "description": "Silla clásica hecha de madera tratada.",
+      "cost": 120,
+      "currency": "USD",
+      "soldCount": 15,
+      "image": "img/prod103_1.jpg"
+    },
+    {
+      "id": 10302,
+      "name": "Mesa grande comedor",
+      "description": "Mesa para comedor de seis personas.",
+      "cost": 450,
+      "currency": "USD",
+      "soldCount": 7,
+      "image": "img/prod103_2.jpg"
+    },
+    {
+      "id": 10303,
+      "name": "Juego de sillones",
+      "description": "Set de sillones tapizados, ideal para living.",
+      "cost": 820,
+      "currency": "USD",
+      "soldCount": 4,
+      "image": "img/prod103_3.jpg"
+    },
+    {
+      "id": 10304,
+      "name": "Ropero 3 puertas",
+      "description": "Ropero amplio con espacio para colgar y guardar.",
+      "cost": 390,
+      "currency": "USD",
+      "soldCount": 10,
+      "image": "img/prod103_4.jpg"
+    }
+  ]
+}

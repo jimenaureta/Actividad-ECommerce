@@ -1,0 +1,11 @@
+{
+  "id": 10304,
+  "name": "Ropero 3 puertas",
+  "description": "Ropero amplio con espacio para colgar y guardar.",
+  "currency": "USD",
+  "cost": 390,
+  "soldCount": 10,
+  "images": [
+    "img/prod103_4.jpg"
+  ]
+}

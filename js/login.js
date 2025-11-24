@@ -1,27 +1,60 @@
+// login.js
 import { iniciarSesion, redirigirSiLogueado } from "./common.js";
 
+const API_BASE_URL = "http://localhost:3000/api";
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Si ya hay sesión, ir directo al inicio
+
+  // Si ya hay sesión iniciada → redirigir al index
   redirigirSiLogueado("index.html");
 
   const form = document.getElementById("loginForm");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("usuario").value.trim();
-    const pass  = document.getElementById("password").value.trim();
+  form.addEventListener("submit", login);
+});
 
-    if (!email || !pass) {
-      alert("Complete Email y Contraseña.");
+// ---------------------- LOGIN COMPLETO ----------------------
+async function login(event) {
+  event.preventDefault();
+
+  // ⚠ Usa tus IDs reales del HTML
+  const email = document.getElementById("usuario").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Complete Email y Contraseña.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Credenciales inválidas");
       return;
     }
 
-    // Inicia sesión con la función ya existente
+    // Guardar token para el backend
+    localStorage.setItem("token", data.token);
+
+    // Guardar sesión del e-commerce (navbar, comentarios, etc.)
     iniciarSesion(email);
 
-    // Guardar el correo para que lo usen el navbar y los comentarios
+    // Guardar email para otros usos
     localStorage.setItem("email", email);
 
-    // Redirigir al inicio
-    location.href = "./index.html";
-  });
-});
+    // Redirigir
+    location.href = "index.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("No se pudo conectar con el servidor");
+  }
+}

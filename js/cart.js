@@ -169,11 +169,11 @@
         if (r.value === "card") {
           card.classList.remove("d-none");
           bank.classList.add("d-none");
-          clearBank();
+          clearCard();
         } else if (r.value === "bank") {
           bank.classList.remove("d-none");
           card.classList.add("d-none");
-          clearCard();
+          clearBank();
         }
       });
     });
@@ -352,7 +352,6 @@
     }
   }
 
-  // Observa el #feedback existente sin modificar su lógica original.
   document.addEventListener("DOMContentLoaded", function () {
     const fb = document.getElementById("feedback");
     if (!fb) return;
@@ -372,7 +371,6 @@
       if (!msg) return;
       // Muestra toast emergente y oculta el feedback estático
       showToast(msg, pickType(), 3000);
-      // No tocamos la línea original que lo setea; solo lo ocultamos luego.
       setTimeout(() => {
         fb.classList.add("d-none");
         fb.textContent = "";
@@ -392,3 +390,70 @@
     handleChange();
   });
 })();
+
+// ==== ENVIAR CARRITO AL BACKEND (ARREGLADO) ====
+async function enviarCarritoALaBD() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Debes iniciar sesión para finalizar la compra.");
+    return;
+  }
+
+  const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+  const items = cartItems
+    .map((item) => {
+      const cost = Number(item.cost ?? item.unitCost ?? 0);
+      const quantity = Number(item.quantity ?? item.count ?? 0);
+
+      return {
+        product_id: item.id ?? item.product_id,
+        name: item.name,
+        unit_cost: cost,
+        quantity,
+        subtotal: cost * quantity
+      };
+    })
+    .filter((it) => it.quantity > 0 && it.unit_cost > 0);
+
+  if (!items.length) {
+    alert("El carrito está vacío.");
+    return;
+  }
+
+  const total = items.reduce((acc, it) => acc + it.subtotal, 0);
+
+  const body = { items, total };
+
+  try {
+    const response = await fetch("http://localhost:3000/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    let data = {};
+    try {
+      const text = await response.text();
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = {};
+    }
+
+    if (response.ok) {
+      alert("Compra registrada correctamente. ID carrito: " + (data.cartId || ""));
+      localStorage.removeItem("cartItems");
+      window.dispatchEvent(new CustomEvent("cart:updated"));
+    } else {
+      console.log("Detalle error carrito:", data);   // 👈 acá va el log
+      alert(data.message || `Error al guardar el carrito (HTTP ${response.status})`);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error de conexión al guardar el carrito");
+  }
+}

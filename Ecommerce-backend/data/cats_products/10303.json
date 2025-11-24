@@ -1,0 +1,11 @@
+{
+  "id": 10303,
+  "name": "Juego de sillones",
+  "description": "Set de sillones tapizados de gran comodidad.",
+  "currency": "USD",
+  "cost": 820,
+  "soldCount": 4,
+  "images": [
+    "img/prod103_3.jpg"
+  ]
+}

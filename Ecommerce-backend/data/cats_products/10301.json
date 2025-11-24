@@ -1,0 +1,11 @@
+{
+  "id": 10301,
+  "name": "Silla de madera",
+  "description": "Silla clásica hecha de madera tratada.",
+  "currency": "USD",
+  "cost": 120,
+  "soldCount": 15,
+  "images": [
+    "img/prod103_1.jpg"
+  ]
+}

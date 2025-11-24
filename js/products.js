@@ -1,9 +1,15 @@
-// js/products.js  (ES module)
-import { getJSONData } from "./common.js";
+// js/products.js
+import { 
+  getJSONData, 
+  PRODUCTS_BASE_URL, 
+  EXT_TYPE 
+} from "./common.js";
 
 /* =================== Config / URLs =================== */
 const CAT_ID = localStorage.getItem("catID") || "101";
-const PRODUCTS_URL = `https://japceibal.github.io/emercado-api/cats_products/${CAT_ID}.json`;
+
+// BACKEND
+const PRODUCTS_URL = `${PRODUCTS_BASE_URL}${CAT_ID}${EXT_TYPE}`;
 
 /* =================== Backups de imágenes =================== */
 const backupImagesByName = {
